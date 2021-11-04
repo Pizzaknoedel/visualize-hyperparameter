@@ -15,7 +15,6 @@
 glmnet_ela
 }
 \description{
-A dataset containing the logloss performance meassure of the two hyperparameter \code{s} and \code{alpha}
-for the dataset \code{kc1}.
+A dataset containing the \code{logloss} performance meassure and the two hyperparameter \code{s} and \code{alpha}.
 }
 \keyword{datasets}

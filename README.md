@@ -1,2 +1,2 @@
 # visualize-hyperparameter
-[![Shiny-Deploy](https://github.com/Pizzaknoedel/visualize-hyperparameter/workflows/Shiny-Deploy/badge.svg)](https://github.com/Pizzaknoedel/visualize-hyperparameter/actions)
+[![R-CMD-check](https://github.com/Pizzaknoedel/visualize-hyperparameter/workflows/R-CMD-check/badge.svg)](https://github.com/Pizzaknoedel/visualize-hyperparameter/actions)
