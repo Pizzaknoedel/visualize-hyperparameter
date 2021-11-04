@@ -1,3 +1,6 @@
 ^package\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+^appveyor\.yml$
+^codecov\.yml$
+^\.github$
