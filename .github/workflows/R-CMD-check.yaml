@@ -6,11 +6,11 @@ on:
   pull_request:
     branches: [main, master]
 
-name: visualize-Hyperparameter
+name: R-CMD-check
 
 jobs:
   R-CMD-check:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
@@ -38,3 +38,5 @@ jobs:
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
+
+
