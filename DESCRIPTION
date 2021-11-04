@@ -1,0 +1,21 @@
+Package: mypackage
+Title: Visualizing Hyperparamer Performance Dependencies in R
+Version: 0.1.1
+Authors@R: 
+    person("Simon", "Pradel", , "simon.pradel@gmx.de", role = c("aut", "cre"))
+Description: Visualizing Hyperparamer Performance Dependencies in R.
+License: LGPL-3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+Depends: R (>= 3.3.1)
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 
+Imports:
+    ggplot2,
+    mlr3,
+    iml,
+    checkmate,
+    mlr3verse
+LazyData: true
