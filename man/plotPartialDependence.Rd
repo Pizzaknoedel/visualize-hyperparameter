@@ -2,28 +2,52 @@
 % Please edit documentation in R/plotPartialDependence.R
 \name{plotPartialDependence}
 \alias{plotPartialDependence}
-\title{partial Dependence plot (PDP)
-
-Calculate the partial Dependence for 1 or 2 Hyperparameter.}
+\title{Partial Dependence Plot (PDP)}
 \usage{
-plotPartialDependence(task, learner, features, gridsize = 20, rug = TRUE)
+plotPartialDependence(
+  task,
+  features = NULL,
+  learner = NULL,
+  gridsize = 20,
+  rug = TRUE,
+  plotICE = TRUE
+)
 }
 \arguments{
-\item{task}{task object}
+\item{task}{\link[mlr3:Task]{mlr3::Task} object \cr
+A task for which the plot should be generated.}
 
-\item{learner}{learner object}
+\item{features}{(\code{character(1)} | \code{character(2)}) \cr
+The name of the features for which the partial dependence should be calculated.
+If no features are specified, the first 2 features of the Task object will be plotted. Default is NULL.}
 
-\item{features}{the name of the Hyperparmaeter for which the partial dependence should be calculated}
+\item{learner}{\link[mlr3:Learner]{mlr3::Learner} object \cr
+A Learner for which the plot should be generated.
+If NUll, then a Random Forest for regression or classification will be used. Default is NULL.}
 
-\item{gridsize}{only important for 2 Hyperparameter. default is 20}
+\item{gridsize}{(\code{numeric(1)}) \cr
+The number of rectangles/ sections per axis. Default is 20.}
 
-\item{rug}{logicaL: should a rug be plotted? default is FALSE}
+\item{rug}{(\code{logical(1)}) \cr
+If TRUE, then a rug will be plotted. Default is TRUE.}
+
+\item{plotICE}{(\code{logical(1)}) \cr
+If TRUE, then the individual conditional expectations (ICE) will be also plotted. Only available for one feature.
+Default is TRUE.}
 }
 \value{
-ggplot object
+A \link{plotly} object.
 }
 \description{
-partial Dependence plot (PDP)
+Visualize a Partial Dependence Plot from a \link[mlr3:Task]{mlr3::Task} object and a \link[mlr3:Learner]{mlr3::Learner}
+}
+\examples{
+library(mlr3)
+data(glmnet_ela)
+task_glmnet_ela = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+plotPartialDependence(task_glmnet_ela)
 
-Calculate the partial Dependence for 1 or 2 Hyperparameter.
+}
+\seealso{
+\link{plotParallelCoordinate} \link{plotHeatmap} \link{plotImportance}
 }

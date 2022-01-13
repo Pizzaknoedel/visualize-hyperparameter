@@ -2,26 +2,35 @@
 % Please edit documentation in R/plotImportance.R
 \name{plotImportance}
 \alias{plotImportance}
-\title{Importance Plot
-
-Calculate the Importance for each Hyperparameter.}
+\title{Importance Plot}
 \usage{
-plotImportance(task, learner)
+plotImportance(task, learner = NULL, loss = "mae")
 }
 \arguments{
-\item{task}{task object}
+\item{task}{\link[mlr3:Task]{mlr3::Task} object \cr
+A task for which the plot should be generated.}
 
-\item{learner}{learner object}
+\item{learner}{\link[mlr3:Learner]{mlr3::Learner} object \cr
+A Learner for which the plot should be generated.
+If NUll, then a Random Forest for regression or classification will be used. Default is NULL.}
+
+\item{loss}{(\code{character(1)} \cr
+The loss function to be used. It can be chosen between "ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
+"mdae", "msle", "percent_bias", "rae", "rmse", "rmsle", "rse", "rrse", "smape". Default is "mae".}
 }
 \value{
-ggplot object
+A \link{plotly} object.
 }
 \description{
-Importance Plot
-
-Calculate the Importance for each Hyperparameter.
+Visualize an Importance Plot from a \link[mlr3:Task]{mlr3::Task} object and a \link[mlr3:Learner]{mlr3::Learner}
 }
 \examples{
-plotImportance(task, learner)
+library(mlr3)
+data(glmnet_ela)
+task_glmnet_ela = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+plotImportance(task_glmnet_ela)
 
+}
+\seealso{
+\link{plotParallelCoordinate} \link{plotHeatmap} \link{plotPartialDependence}
 }

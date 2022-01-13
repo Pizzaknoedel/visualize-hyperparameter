@@ -4,8 +4,47 @@
 \alias{plotHeatmap}
 \title{Heatmap}
 \usage{
-plotHeatmap(task, features, gridsize = 20)
+plotHeatmap(
+  task,
+  features = NULL,
+  fun = mean,
+  gridsize = 20,
+  scatterplot = FALSE,
+  rug = TRUE
+)
+}
+\arguments{
+\item{task}{(\link[mlr3:Task]{mlr3::Task} object) \cr
+A task for which the plot should be generated.}
+
+\item{features}{(\code{character(2)}) \cr
+Names of two columns to plot. If NULL, then the first two feature columns will be plotted. Default is NULL.}
+
+\item{fun}{(\code{function}) \cr
+A summary function used in the rectangles of the grid. The default summary function is \link{mean}.}
+
+\item{gridsize}{(\code{numeric(1)}) \cr
+The number of rectangles per axis. Default value is 20.}
+
+\item{scatterplot}{(\code{logical(1)}) \cr
+If TRUE, then a scatterplot will be plotted. Default is FALSE.}
+
+\item{rug}{(\code{logical(1)}) \cr
+If TRUE, then a rug will be plotted. Default is TRUE.}
+}
+\value{
+A \link{plotly} object.
 }
 \description{
-Heatmap
+Visualize a heatmap from a \link[mlr3:Task]{mlr3::Task} object.
+}
+\examples{
+library(mlr3)
+data(glmnet_ela)
+task_glmnet_ela = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+plotHeatmap(task_glmnet_ela)
+
+}
+\seealso{
+\link{plotParallelCoordinate} \link{plotPartialDependence} \link{plotImportance}
 }

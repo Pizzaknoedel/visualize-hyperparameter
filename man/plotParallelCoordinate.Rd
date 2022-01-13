@@ -2,19 +2,63 @@
 % Please edit documentation in R/plotParallelCoordinate.R
 \name{plotParallelCoordinate}
 \alias{plotParallelCoordinate}
-\title{Parallel Coordinate plot}
+\title{Parallel Coordinate Plot (PCP)}
 \usage{
 plotParallelCoordinate(
   task,
-  labeltarget = TRUE,
-  labelside = "top",
-  labelangel = 0,
+  features = NULL,
+  labelside = "Top",
+  labelangle = 0,
   colbarrange = NULL,
-  colbarreverse = FALSE,
   constrainrange = NULL,
-  autoorder = TRUE
+  labeltarget = TRUE,
+  colbarreverse = FALSE,
+  autosort = TRUE
 )
 }
+\arguments{
+\item{task}{(\link[mlr3:Task]{mlr3::Task} object) \cr
+A task for which the plot should be generated.}
+
+\item{features}{(\code{character}) \cr
+Names of columns to plot. If NULL, then each column will be plotted. Default is NULL.}
+
+\item{labelside}{(\code{character(1)} \cr
+The side of the labels for the scales. It can be chosen between "Top" and "Bottom". Default is "Top".}
+
+\item{labelangle}{(\code{numeric(1)}) \cr
+The angle for the labels. Default is 0.}
+
+\item{colbarrange}{(\code{numeric(2)}) \cr
+A vector with two numeric values. Its distance specifies the range of the color bar for the labeled target.
+If NULL, then the color bar between minimum and maximum of the target variable is displayed. Default is NULL.}
+
+\item{constrainrange}{(\code{numeric(2)}) \cr
+A vector with two numeric values between 0 and 1. The vector restrict each column to the values of a range
+for which they are within the quantile of the target variable. If NULL, then no restriction is plotted. Default is NULL.}
+
+\item{labeltarget}{(\code{logical(1)}) \cr
+If TRUE, the target will be labeled. Default is TRUE.}
+
+\item{colbarreverse}{(\code{logical(1)}) \cr
+If TRUE, The colorbar will be reversed. Default is FALSE.}
+
+\item{autosort}{(\code{logical(1)}) \cr
+If True, The columns will be ordered. Default is TRUE.}
+}
+\value{
+A \link{plotly} object.
+}
 \description{
-Parallel Coordinate plot
+Visualize a Parallel Coordinate Plot from a \link[mlr3:Task]{mlr3::Task} object.
+}
+\examples{
+library(mlr3)
+data(glmnet_ela)
+task_glmnet_ela = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+plotParallelCoordinate(task = task_glmnet_ela)
+
+}
+\seealso{
+\link{plotHeatmap} \link{plotPartialDependence} \link{plotImportance}
 }

@@ -1,9 +1,9 @@
-Package: mypackage
+Package: VisHyp
 Title: Visualizing Hyperparamer Performance Dependencies in R
 Version: 0.1.1
 Authors@R: 
     person("Simon", "Pradel", , "simon.pradel@gmx.de", role = c("aut", "cre"))
-Description: Visualizing Hyperparamer Performance Dependencies in R.
+Description: Visualizing Hyperparamer Performance Dependencies.
 License: LGPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -18,5 +18,11 @@ Imports:
     mlr3,
     iml,
     checkmate,
-    mlr3verse
+    mlr3pipelines,
+    mlr3learners,
+    plotly,
+    shiny,
+    corrplot,
+    stats,
+    ranger
 LazyData: true
