@@ -1,86 +1,165 @@
-#' @title Parallel Coordinate plot
+#' @title Parallel Coordinate Plot (PCP)
+#' @description Visualize a Parallel Coordinate Plot from a [mlr3::Task] object.
+#'
+#' @param task ([mlr3::Task] object) \cr
+#'   A task for which the plot should be generated.
+#' @param features (`character`) \cr
+#'   Names of columns to plot. If NULL, then each column will be plotted. Default is NULL.
+#' @param labelside (`character(1)` \cr
+#'   The side of the labels for the scales. It can be chosen between "Top" and "Bottom". Default is "Top".
+#' @param labelangle (`numeric(1)`) \cr
+#'   The angle for the labels. Default is 0.
+#' @param colbarrange (`numeric(2)`) \cr
+#'   A vector with two numeric values. Its distance specifies the range of the color bar for the labeled target.
+#'   If NULL, then the color bar between minimum and maximum of the target variable is displayed. Default is NULL.
+#' @param constrainrange (`numeric(2)`) \cr
+#'   A vector with two numeric values between 0 and 1. The vector restrict each column to the values of a range
+#'   for which they are within the quantile of the target variable. If NULL, then no restriction is plotted. Default is NULL.
+#' @param labeltarget (`logical(1)`) \cr
+#'   If TRUE, the target will be labeled. Default is TRUE.
+#' @param colbarreverse (`logical(1)`) \cr
+#'   If TRUE, The colorbar will be reversed. Default is FALSE.
+#' @param autosort (`logical(1)`) \cr
+#'   If True, The columns will be ordered. Default is TRUE.
+#'
+#' @return A [plotly] object.
+#'
+#' @seealso [plotHeatmap] [plotPartialDependence] [plotImportance]
+#'
+#' @examples
+#' library(mlr3)
+#' data(glmnet_ela)
+#' task_glmnet_ela = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+#' plotParallelCoordinate(task = task_glmnet_ela)
+#'
+#' @export
 
 
-plotParallelCoordinate <- function(task, labeltarget = TRUE, labelside = "top", labelangel = 0, colbarrange = NULL,
-                                   colbarreverse = FALSE, constrainrange = NULL, autoorder = TRUE) {
+plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", labelangle = 0, colbarrange = NULL, constrainrange = NULL,
+                                   labeltarget = TRUE,  colbarreverse = FALSE,  autosort = TRUE) {
 
-  #retrieve the target and features variables which are stored inside the task
-  df <- as.data.frame(task$data())
-  target <- task$target_names
-  features <- task$feature_names
+  # check input
+  assert_task(task)
+  assert(checkNull(features), checkVector(features), combine = "or")
+  assert_choice(labelside, c("Top","Bottom"))
+  assert_numeric(labelangle, len = 1)
+  assert(checkNumeric(colbarrange, len = 2), checkNull(colbarrange))
+  assert(checkNumeric(constrainrange, len = 2, lower = 0, upper = 1), checkNull(constrainrange))
+  assert_logical(labeltarget)
+  assert_logical(colbarreverse)
+  assert_logical(autosort)
 
-  #transform the df object into a vector
-  target_vector <-  df[[target]]
+  labelside <- ifelse(labelside == "Top", "top", "bottom")
 
-  #constrain range
-  if(is.null(constrainrange) == FALSE)
-  {
-    target_ordered <- target_vector[order(target_vector, decreasing = FALSE)]
-    index <- round(length(target_ordered)*constrainrange)
-    target_subset <- target_ordered[min(index):max(index)]
-    targetindex <- match(target,names(df))
-    df_subset <- subset(df, df[,targetindex] >= min(target_subset) & df[,targetindex] <= max(target_subset))
-  }
+  # make the task more robust
+  po =  po("removeconstants") %>>% po("fixfactors")
+  task = po$train(task)[[1]]
 
+  # retrieve the target and features variables which are stored inside the task
+  df <- as.data.frame(task$data(), stringsAsFactors = TRUE)
 
-  #prepare the colorbar for the target
-  if(is.null(colbarrange))
-    colbarrange <- target_vector
-
-  #get the rows of the features in the data.frame
-  variable <- match(features,names(df))
-
-  #initialize an empty list for the features
-  hyperparm <- list()
-
-  if(autoorder == TRUE){
-    test <- df[variable]
-    test <- as.data.frame(lapply(test, function(x) if(is.character(x)||is.logical(x)) as.factor(x) else x))
-    test <- as.data.frame(lapply(test, as.numeric))
-  corr <- cor(test)
-  invisible(capture.output(test <- corReorder(corr, order = ("chain"))))
-  variable <- match(colnames(test),names(df))
-  }
-
-  #each hyperparameter gets an own list with an own scale and label
-  for(i in variable){
-    vector <- df[,i]
-    if(!is.numeric(vector)){
-      vector <- if(!is.factor(vector)) as.factor(vector) else vector
-      tickvals <- 1:nlevels(vector)
-      ticktext = levels(vector)
-      vectornum <- as.numeric(vector)
-      x <- list(tickvals = tickvals, ticktext = ticktext,
-                label = names(df[i]), values = vectornum)
-      if(is.null(constrainrange) == FALSE){
-      remaininglvl <- levels(droplevels(df_subset[,i]))
-      indexlvl <- match(remaininglvl, levels(vector))
-      x <- c(x, constraintrange = list(c(min(indexlvl),max(indexlvl))))
+  # show NA's as an own factor level or as maximum
+  n <- length(df)
+  for (i in 1:n) {
+    if(is.factor(df[,i]) || is.logical(df[,i])) {
+      if (sum(is.na(df[,i])) > 0) {
+        levels(df[,i]) <- c(levels(df[,i]),"NA")
+        df[,i][is.na(df[,i])] <- "NA"
       }
     }
-    else {
-    x <- list(range = c(min(vector), max(vector)),
-              label = names(df[i]), values = vector)
-    if(is.null(constrainrange) == FALSE)
-    x <- c(x, constraintrange = list(c(min(df_subset[,i]), max(df_subset[,i]))))
+    else if(is.numeric(df[,i])) {
+      df[,i][is.na(df[,i])] <- max(df[,i], na.rm = TRUE)
     }
-    hyperparm <- c(hyperparm, list(x))
   }
 
-  #plot a plotly object
-  fig <- df %>%
-    plot_ly() %>% add_trace(type = "parcoords", labelangle = labelangel, labelside = labelside,
-                            line = list(color = ~target_vector,
+
+  targetName <- task$target_names
+  if (is.null(features))
+    featureNames <- task$feature_names
+  else
+    featureNames <- features
+
+  # transform the df object into a vector
+  targetVector <-  df[[targetName]]
+
+  # constrain range in the target variable
+  if (is.null(constrainrange) == FALSE && !all(constrainrange %in% c(0,1))) {
+    targetOrdered <- targetVector[order(targetVector, decreasing = FALSE)]
+    indexRange <- round(length(targetOrdered)*constrainrange)
+    targetSubset <- targetOrdered[min(indexRange):max(indexRange)]
+    targetindex <- match(targetName,names(df))
+    dfSubset <- subset(df, df[, targetindex] >= min(targetSubset) & df[, targetindex] <= max(targetSubset))
+  }
+
+
+  # prepare the colorbar for the target
+  if (is.null(colbarrange))
+    colbarrange <- targetVector
+
+  # retrieve the feature columns from the data.frame
+  featureVar <- match(featureNames, names(df))
+
+  # initialize an empty list for the features
+  hyperparam <- list()
+
+  # If automatic sorting is enabled, the column names are sorted by their correlation
+  # retrieve the columns of the characteristics from the data.frame
+  if (autosort == TRUE) {
+    featuresDf <- df[featureVar]
+    featuresDf <- as.data.frame(lapply(featuresDf, function(x) if (is.character(x) || is.logical(x)) as.factor(x) else x))
+    featuresDf <- as.data.frame(lapply(featuresDf, as.numeric))
+  corr <- stats::cor(featuresDf)
+  featuresDf <- corrplot::corrMatOrder(corr, order = 'FPC')
+  featuresDf <- corr[featuresDf, featuresDf]
+  featureVar <- match(colnames(featuresDf),names(df))
+  }
+
+  # each hyperparameter gets an own list with an own scale and label
+  for (i in featureVar) {
+    paramVector <- df[,i]
+
+    # prepare the list for non-numeric features
+    if (!is.numeric(paramVector)) {
+      paramVector <- if(!is.factor(paramVector)) as.factor(paramVector) else paramVector
+      tickvals <- 1:nlevels(paramVector)
+      ticktext <- levels(paramVector)
+      numVector <- as.numeric(paramVector)
+      paramList <- list(tickvals = tickvals, ticktext = ticktext,
+                label = names(df[i]), values = numVector)
+
+      # constrain range in the feature variables
+      if (is.null(constrainrange) == FALSE &&  !all(constrainrange %in% c(0,1))) {
+        dfSubset[,i] <- as.factor(dfSubset[,i])
+        remainingLvl <- levels(droplevels(dfSubset[,i]))
+        indexLvl <- match(remainingLvl, levels(paramVector))
+        paramList <- c(paramList, constraintrange = list(c(min(indexLvl),max(indexLvl))))
+      }
+
+    # prepare the list for numeric features
+    } else {
+    paramList <- list(range = c(min(paramVector), max(paramVector)),
+              label = names(df[i]), values = paramVector)
+
+      # constrain range in the feature variables
+      if (is.null(constrainrange) == FALSE &&  !all(constrainrange %in% c(0,1)))
+        paramList <- c(paramList, constraintrange = list(c(min(dfSubset[,i]), max(dfSubset[,i]))))
+    }
+
+    # add the selected hyperparameter to the list of hyperparameters to be displayed.
+    hyperparam <- c(hyperparam, list(paramList))
+  }
+
+  # create a plotly object
+  pcp <- df %>%
+    plot_ly() %>% add_trace(type = "parcoords", labelangle = labelangle, labelside = labelside,
+                            line = list(color = ~targetVector,
                                         colorscale = 'Jet',
                                         reversescale = colbarreverse,
                                         cmin = min(colbarrange),
                                         cmax = max(colbarrange),
-                                        colorbar = list(title = list(text = ifelse(labeltarget == labeltarget,
-                                                                                   target, ""), side = labelside))),
-                            dimensions = hyperparm)
+                                        colorbar = list(title = list(text = ifelse(labeltarget == TRUE, targetName, ""), side = labelside))),
+                            dimensions = hyperparam)
 
-
-
-  fig
+  pcp
 
 }

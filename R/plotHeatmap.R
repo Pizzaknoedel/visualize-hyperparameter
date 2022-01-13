@@ -1,28 +1,74 @@
 #' @title Heatmap
+#' @description Visualize a heatmap from a [mlr3::Task] object.
+#'
+#' @param task ([mlr3::Task] object) \cr
+#'   A task for which the plot should be generated.
+#' @param features (`character(2)`) \cr
+#'   Names of two columns to plot. If NULL, then the first two feature columns will be plotted. Default is NULL.
+#' @param fun (`function`) \cr
+#'   A summary function used in the rectangles of the grid. The default summary function is [mean].
+#' @param gridsize (`numeric(1)`) \cr
+#'   The number of rectangles per axis. Default value is 20.
+#' @param scatterplot (`logical(1)`) \cr
+#'   If TRUE, then a scatterplot will be plotted. Default is FALSE.
+#' @param rug (`logical(1)`) \cr
+#'   If TRUE, then a rug will be plotted. Default is TRUE.
+#'
+#' @return A [plotly] object.
+#'
+#' @seealso [plotParallelCoordinate] [plotPartialDependence] [plotImportance]
+#'
+#' @examples
+#' library(mlr3)
+#' data(glmnet_ela)
+#' task_glmnet_ela = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+#' plotHeatmap(task_glmnet_ela)
+#'
+#' @export
 
 
-plotHeatmap <- function(task, features, gridsize = 20) {
+plotHeatmap <- function(task, features = NULL, fun = mean, gridsize = 20, scatterplot = FALSE, rug = TRUE) {
 
-  #aufpassen auf unterschiedlichen datainput (kategorial, numerisch)
+  # take the first two features if no features are selected yet
+  if(is.null(features))
+  features <- task$feature_names[c(1,2)]
 
-  library(ggplot2)
-  task <- task
-  feature <- c("mnth", "season")
-  features2 <- task$feature_names
-  target <- task$target_names
+  # check input
+  assertVector(features, len = 2)
+  assert_choice(features[1], task$feature_names)
+  assert_choice(features[2], task$feature_names)
+  assert_task(task)
+  assert_numeric(gridsize, len = 1, lower = 1)
+  assert_function(fun)
+  assert_logical(scatterplot)
+  assert_logical(rug)
 
-  df <- task$data()
+  # make the task more robust
+  po = po("imputehist") %>>% po("fixfactors") %>>% po("imputeoor")  %>>% po("removeconstants")
+  task = po$train(task)[[1]]
 
-  #transform the df object into a vector
-  f <- df[[feature[1]]]
-  f2 <- df[[feature[2]]]
-  t <-  df[[target]]
+  # receive data and target name from the task
+  data <- task$data()
+  targetName <- task$target_names
 
+  legend <- paste0(targetName, " (", as.character(substitute(fun)), ")")
 
-    ggplot(df, aes(x = f, y = f2, z = t)) +
-      geom_tile(stat = "summary_2d", fun = mean, bins = gridsize) +
-      labs(title = "Heatmap",
-           fill = "logloss")+
-      geom_rug(alpha = 0.2, sides = "bl",
-      position = position_jitter(width = 0.07, height = 0.07))
+  # create a heatmap with ggplot2
+  plotData <-  ggplot(data, aes_string(x = features[1], y = features[2], z = targetName)) +
+      geom_tile(stat = "summary_2d", fun = fun, bins = gridsize) +
+      labs(title = "Heatmap", fill = legend)
+
+  if (rug == TRUE)
+      plotData <- plotData +
+      geom_rug(alpha = 0.2, sides = "bl")
+
+  if (scatterplot == TRUE)
+      plotData  <- plotData +
+      geom_point()
+
+  # create a plotly object
+  heatmap <- ggplotly(plotData)
+
+  heatmap
+
 }
