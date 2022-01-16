@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "50%"
+  out.width = "100%"
 )
 ```
 
@@ -53,6 +53,7 @@ plotImportance(task)
 plotPartialDependence(task)
 ```
 
+knitr::include_graphics("lcbench_Best_PCP.png")
 
 ```r 
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write
