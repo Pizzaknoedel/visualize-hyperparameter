@@ -5,7 +5,7 @@ DataServer <- function(id) {
 
     function(input, output, session) {
 
-data <- reactiveValues(originalData = NULL, manipulateData = NULL, subsetData = NULL, selectedCol = NULL, droppedCol = NULL, target = NULL)
+data <- reactiveValues(originalData = NULL, manipulateData = NULL, subsetData = NULL, selectedCol = NULL, droppedCol = NULL, target = NULL, taskRdy = FALSE)
 
 # originalData: Data without manipulation (important to reset the data if needed)
 # manipulateData: Data with manipulations but without filters (This is important that the filter works in DT)
@@ -38,8 +38,7 @@ output$dataManipulation <- renderUI({
     h5("Data Manipulation", style = "font-size:15px;font-weight: bold;"),
     fluidRow(column(2, h5("Select a Column: ")),
              column(4, selectizeInput(inputId = ns("selectColumn"), label = NULL,
-                                      choices = names(data$manipulateData),
-                                      multiple = FALSE)),
+                                      choices = names(data$manipulateData), multiple = TRUE)),
              column(2, actionButton(inputId = ns("Drop_column"), label = "Drop column")),
              column(2, actionButton(inputId = ns("resetData"), label = "Reset Data"), style = "float: right;")),
     fluidRow(column(2, h5("Rename Column: ")),
@@ -62,7 +61,7 @@ output$dataView <- renderDataTable({
       data$manipulateData[,i] <- as.factor(data$manipulateData[,i])
   }
 
-  datatable(data$manipulateData, filter = 'top', rownames = FALSE, selection  = list(target = "column", mode = 'single'),
+  datatable(data$manipulateData, filter = 'top', rownames = FALSE, selection  = list(target = "column", mode = 'multiple'),
             options = list(pageLength = 5, paging = TRUE, bInfo = TRUE, scrollY = "200px", dom = 'tpir', autoWidth = F, ordering = FALSE, scrollX = "200px" ))
 
 })
@@ -126,15 +125,15 @@ observeEvent(input$selectColumn, {
 })
 
 #observe clicks in DT (mark column which is selected)
-observeEvent(input$dataView_cell_clicked$col, {
-  data$selectedCol <- input$dataView_cell_clicked$col + 1
+observeEvent(input$dataView_columns_selected, {
+  data$selectedCol <- input$dataView_columns_selected + 1 #input$dataView_cell_clicked$col + 1
   updateSelectizeInput(session, "selectColumn", choices = names(data$manipulateData), selected = names(data$manipulateData)[data$selectedCol])
 })
 
 #observe the dropcolumn button
 observeEvent(input$Drop_column, {
 
-if(ncol(data$manipulateData) > 2)  {
+if(ncol(data$manipulateData)-length(data$selectedCol) >= 2)  {
   data$manipulateData <- as.data.frame(data$manipulateData)
   data$subsetData <- as.data.frame(data$subsetData)
   data$manipulateData <- data$manipulateData[,!names(data$manipulateData) %in% names(data$manipulateData)[data$selectedCol]]
@@ -158,7 +157,11 @@ observeEvent(input$column_rename, {
 
   validname = make.names(input$new_column_name)
 
-  if(str_length(validname)>20) {
+  if (length(data$selectedCol) > 1) {
+    shinyalert(title = "More than 1 Column selected",
+               text = userhelp[["More Column Selected"]], closeOnClickOutside = TRUE, animation = FALSE)
+  }
+  else if(str_length(validname)>20) {
     newstring <- str_sub(validname, end=20)
     shinyalert(title = "New Column Name",
                text = userhelp[["New Column Name"]], closeOnClickOutside = TRUE, animation = FALSE)
@@ -191,7 +194,22 @@ observeEvent(input$dataSelect, {
     data$subsetData <- NULL
     data$manipulateData <- NULL
     data$target <- NULL
+    data$taskRdy <- FALSE
   })
+
+#Warunung, falls Spaltennamen öfters vorkommen
+observeEvent(data$subsetData, {
+if (any(duplicated(names(data$subsetData)))){
+  shinyalert(title = "Duplicated Columns",
+             text = userhelp[["Duplicated Columns"]], closeOnClickOutside = TRUE, animation = FALSE)
+  colNames <- names(data$subsetData)
+  newNames <- make.unique(colNames)
+  colnames(data$subsetData) <- newNames
+  colnames(data$manipulateData) <- newNames
+}
+  data$taskRdy <- TRUE
+})
+
 
 return(data)
     }

@@ -9,13 +9,13 @@ VisualizationServer <- function(id, data) {
 
       features_to_use <- reactiveValues(features = NULL)
 
-      counter <- reactiveValues(plotNumber = 4, nameIndicator = NULL, plotType = NULL, plotType2 = NULL, plotType3 = NULL, plotType4 = NULL)
+      counter <- reactiveValues(plotNumber = 4, nameIndicator = NULL, plotType = NULL, plotType2 = NULL, plotType3 = NULL, plotType4 = NULL, chosenPlots = NULL)
 
       learner <- reactiveValues(model = NULL)
 
       finalPlots <- reactiveValues(plot1 = NULL, plot2 = NULL, plot3 = NULL, plot4 = NULL)
       #reactive values for task
-      Task_properties <- reactiveValues(task = NULL, overview = NULL, target = NULL, featNames = NULL, featTypes = NULL, positive = NULL, tableOptions = NULL)
+      Task_properties <- reactiveValues(task = NULL, overview = NULL, target = NULL, featTypes = NULL, positive = NULL, tableOptions = NULL, plotRdy = FALSE, featureImputed = NULL)
 
       # first the plot types need to be initialized.
       # since it is not possible to plot 4 plots at the same time, 4 different initializations of the plot types are required.
@@ -34,6 +34,8 @@ VisualizationServer <- function(id, data) {
         else
         plotName <- counter$plotType
 
+
+
          tabsetPanel(
              id = ns("FunctionChoice"),
              type = "hidden",
@@ -43,9 +45,9 @@ VisualizationServer <- function(id, data) {
              tabPanel("PDP",
                       fluidRow(column( 12, h5("Select Features"))),
                       fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesPDP"), label = NULL,
-                                                          choices = Task_properties$featNames,
+                                                          choices = Task_properties$featureImputed,
                                                           multiple = TRUE,
-                                                          selected = Task_properties$task$feature_names[c(1)],
+                                                          selected = Task_properties$featureImputed[c(1)],
                                                           options = list(maxItems = 2)))),
                       fluidRow(column( 12, h5("Gridsize"))),
                       fluidRow(column( 12, numericInput(ns("gridsizePDP"), NULL, value = 15))),
@@ -61,9 +63,9 @@ VisualizationServer <- function(id, data) {
              ),
              tabPanel("PCP",
                       fluidRow(column( 12, h5("Select Features"))),
-                      fluidRow(column( 12, pickerInput(ns("plotFeatures"), label = NULL,
-                                                       choices = Task_properties$featNames, options = list(`actions-box` = TRUE), multiple = T,
-                                                       selected = Task_properties$featNames))),
+                      fluidRow(column( 12, pickerInput(ns("plotFeaturesPCP"), label = NULL,
+                                                       choices = Task_properties$featureImputed, options = list(`actions-box` = TRUE), multiple = T,
+                                                       selected = Task_properties$featureImputed))),
                       fluidRow(column( 12, h5("Restrict Target Range"))),
                       fluidRow(column( 12, sliderInput(ns("constrainRange"), label = NULL, min = 0,
                                                        max = 1, value = c(0,1)))),
@@ -90,9 +92,9 @@ VisualizationServer <- function(id, data) {
              tabPanel("Heatmap",
                       fluidRow(column( 12, h5("Select Features"))),
                       fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesHM"), label = NULL,
-                                                          choices = Task_properties$featNames,
+                                                          choices = Task_properties$featureImputed,
                                                           multiple = TRUE,
-                                                          selected = Task_properties$task$feature_names[c(1,2)],
+                                                          selected = Task_properties$featureImputed[c(1,2)],
                                                           options = list( maxItems = 2)))),
                       fluidRow(column( 12, h5("Choose Function"))),
                       fluidRow(column( 12, selectizeInput(inputId = ns("plotFunction"), label = NULL,
@@ -115,7 +117,7 @@ VisualizationServer <- function(id, data) {
                                                           choices = c("ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
                                                                       "mdae", "msle", "percent_bias", "rae", "rmse", "rmsle",
                                                                       "rse", "rrse", "smape"), selected = "mae"))),
-             ), selected = "PDP"
+             ), selected = plotName
            )
       })
 
@@ -136,9 +138,9 @@ VisualizationServer <- function(id, data) {
           tabPanel("PDP",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesPDP2"), label = NULL,
-                                                       choices = Task_properties$featNames,
+                                                       choices = Task_properties$featureImputed,
                                                        multiple = TRUE,
-                                                       selected = Task_properties$task$feature_names[c(1)],
+                                                       selected = Task_properties$featureImputed[c(1)],
                                                        options = list(maxItems = 2)))),
                    fluidRow(column( 12, h5("Gridsize"))),
                    fluidRow(column( 12, numericInput(ns("gridsizePDP2"), NULL, value = 15))),
@@ -155,8 +157,8 @@ VisualizationServer <- function(id, data) {
           tabPanel("PCP",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, pickerInput(ns("plotFeaturesPCP2"), label = NULL,
-                                                    choices = Task_properties$featNames, options = list(`actions-box` = TRUE), multiple = T,
-                                                    selected = Task_properties$featNames))),
+                                                    choices = Task_properties$featureImputed, options = list(`actions-box` = TRUE), multiple = T,
+                                                    selected = Task_properties$featureImputed))),
                    fluidRow(column( 12, h5("Restrict Target Range"))),
                    fluidRow(column( 12, sliderInput(ns("constrainRange2"), label = NULL, min = 0,
                                                     max = 1, value = c(0,1)))),
@@ -183,9 +185,9 @@ VisualizationServer <- function(id, data) {
           tabPanel("Heatmap",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesHM2"), label = NULL,
-                                                       choices = Task_properties$featNames,
+                                                       choices = Task_properties$featureImputed,
                                                        multiple = TRUE,
-                                                       selected = Task_properties$task$feature_names[c(1,2)],
+                                                       selected = Task_properties$featureImputed[c(1,2)],
                                                        options = list( maxItems = 2)))),
                    fluidRow(column( 12, h5("Choose Function"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFunction2"), label = NULL,
@@ -208,7 +210,7 @@ VisualizationServer <- function(id, data) {
                                                        choices = c("ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
                                                                    "mdae", "msle", "percent_bias", "rae", "rmse", "rmsle",
                                                                    "rse", "rrse", "smape"), selected = "mae"))),
-          ), selected = "PDP"
+          ), selected = plotName2
         )
       })
 
@@ -229,9 +231,9 @@ VisualizationServer <- function(id, data) {
           tabPanel("PDP",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesPDP3"), label = NULL,
-                                                       choices = Task_properties$featNames,
+                                                       choices = Task_properties$featureImputed,
                                                        multiple = TRUE,
-                                                       selected = Task_properties$task$feature_names[c(1)],
+                                                       selected = Task_properties$featureImputed[c(1)],
                                                        options = list(maxItems = 2)))),
                    fluidRow(column( 12, h5("Gridsize"))),
                    fluidRow(column( 12, numericInput(ns("gridsizePDP3"), NULL, value = 15))),
@@ -248,8 +250,8 @@ VisualizationServer <- function(id, data) {
           tabPanel("PCP",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, pickerInput(ns("plotFeaturesPCP3"), label = NULL,
-                                                    choices = Task_properties$featNames, options = list(`actions-box` = TRUE), multiple = T,
-                                                    selected = Task_properties$featNames))),
+                                                    choices = Task_properties$featureImputed, options = list(`actions-box` = TRUE), multiple = T,
+                                                    selected = Task_properties$featureImputed))),
                    fluidRow(column( 12, h5("Restrict Target Range"))),
                    fluidRow(column( 12, sliderInput(ns("constrainRange3"), label = NULL, min = 0,
                                                     max = 1, value = c(0,1)))),
@@ -276,9 +278,9 @@ VisualizationServer <- function(id, data) {
           tabPanel("Heatmap",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesHM3"), label = NULL,
-                                                       choices = Task_properties$featNames,
+                                                       choices = Task_properties$featureImputed,
                                                        multiple = TRUE,
-                                                       selected = Task_properties$task$feature_names[c(1,2)],
+                                                       selected = Task_properties$featureImputed[c(1,2)],
                                                        options = list( maxItems = 2)))),
                    fluidRow(column( 12, h5("Choose Function"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFunction3"), label = NULL,
@@ -301,7 +303,7 @@ VisualizationServer <- function(id, data) {
                                                        choices = c("ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
                                                                    "mdae", "msle", "percent_bias", "rae", "rmse", "rmsle",
                                                                    "rse", "rrse", "smape"), selected = "mae"))),
-          ), selected = "PDP"
+          ), selected = plotName3
         )
       })
 
@@ -322,9 +324,9 @@ VisualizationServer <- function(id, data) {
           tabPanel("PDP",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesPDP4"), label = NULL,
-                                                       choices = Task_properties$featNames,
+                                                       choices = Task_properties$featureImputed,
                                                        multiple = TRUE,
-                                                       selected = Task_properties$task$feature_names[c(1)],
+                                                       selected = Task_properties$featureImputed[c(1)],
                                                        options = list(maxItems = 2)))),
                    fluidRow(column( 12, h5("Gridsize"))),
                    fluidRow(column( 12, numericInput(ns("gridsizePDP4"), NULL, value = 15))),
@@ -341,8 +343,8 @@ VisualizationServer <- function(id, data) {
           tabPanel("PCP",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, pickerInput(ns("plotFeaturesPCP4"), label = NULL,
-                                                    choices = Task_properties$featNames, options = list(`actions-box` = TRUE), multiple = T,
-                                                    selected = Task_properties$featNames))),
+                                                    choices = Task_properties$featureImputed, options = list(`actions-box` = TRUE), multiple = T,
+                                                    selected = Task_properties$featureImputed))),
                    fluidRow(column( 12, h5("Restrict Target Range"))),
                    fluidRow(column( 12, sliderInput(ns("constrainRange4"), label = NULL, min = 0,
                                                     max = 1, value = c(0,1)))),
@@ -369,9 +371,9 @@ VisualizationServer <- function(id, data) {
           tabPanel("Heatmap",
                    fluidRow(column( 12, h5("Select Features"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFeaturesHM4"), label = NULL,
-                                                       choices = Task_properties$featNames,
+                                                       choices = Task_properties$featureImputed,
                                                        multiple = TRUE,
-                                                       selected = Task_properties$task$feature_names[c(1,2)],
+                                                       selected = Task_properties$featureImputed[c(1,2)],
                                                        options = list( maxItems = 2)))),
                    fluidRow(column( 12, h5("Choose Function"))),
                    fluidRow(column( 12, selectizeInput(inputId = ns("plotFunction4"), label = NULL,
@@ -394,7 +396,7 @@ VisualizationServer <- function(id, data) {
                                                        choices = c("ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
                                                                    "mdae", "msle", "percent_bias", "rae", "rmse", "rmsle",
                                                                    "rse", "rrse", "smape"), selected = "mae"))),
-          ), selected = "PDP"
+          ), selected = plotName4
         )
       })
 
@@ -412,6 +414,7 @@ VisualizationServer <- function(id, data) {
         names(plotNames)[3] <- counter$plotType3
       if(!is.null(input$selectPlot4)  & !is.null(counter$plotType4))
         names(plotNames)[4] <- counter$plotType4
+
 
       checkboxGroupInput(ns("numberPlots"), label = h5("Choose which plots should be calculated and displayed"),
                          choices = plotNames,
@@ -451,11 +454,11 @@ VisualizationServer <- function(id, data) {
 
       #UI-OUTPUT TabsetPanel
       output$tabPanelUi <- renderUI({
-        selectedPlot <- "Plot 1"
-        # if(is.null(counter$nameIndicator))
-        #   selectedPlot <- "Plot 1"
-        # else
-        #   selectedPlot <- counter$nameIndicator
+
+        if(is.null(counter$nameIndicator))
+          selectedPlot <- "Plot 1"
+        else
+          selectedPlot <- counter$nameIndicator
 
         tabsetPanel(type = "tabs",
                     id = ns("plotsPanel"),
@@ -592,14 +595,12 @@ VisualizationServer <- function(id, data) {
 
         req(!is.null(data$subsetData))
         req(!is.null(data$target))
+        req(data$taskRdy == TRUE)
+
 
         Task_properties$target <- data$subsetData[[data$target]]
 
-        if (any(duplicated(names(data$subsetData)))){
-          shinyalert(title = "Duplicated Columns",
-                     text = userhelp[["Duplicated Columns"]], closeOnClickOutside = TRUE, animation = FALSE)
-
-        } else if (is.numeric(Task_properties$target)) {
+        if (is.numeric(Task_properties$target)) {
           #Warnung: Error in modifyList: is.list(val) is not TRUE, error because of R6 object into reactive value
           Task_properties$task <- TaskRegr$new(id = "current_task", backend = data$subsetData, target = data$target)
 
@@ -610,22 +611,45 @@ VisualizationServer <- function(id, data) {
           shinyalert(title = "Target Selection",
                      text = userhelp[["Task Creation Target"]], closeOnClickOutside = TRUE, animation = FALSE)
         }
+
+        # make the task more robust for feature selection
+
+        n <- length(data$subsetData)
+        featureImputed <- c()
+        for (i in 1:n) {
+
+          if(is.numeric(data$subsetData[,i])) {
+            if(length(unique(data$subsetData[,i])) > 2) {
+              newName <- names(data$subsetData[i])
+              featureImputed <- c(featureImputed, newName)
+            }
+          }
+          else  {
+            if(length(unique(data$subsetData[,i])) > 1) {
+              newName <- names(data$subsetData[i])
+              featureImputed <- c(featureImputed, newName)
+            }
+          }
+        }
+
+        Task_properties$featureImputed <- featureImputed[!featureImputed %in% data$target]
+
       })
+
 
 
       # observe the choice of the plot for each tab
       observe({
-        req(Task_properties$featNames)
         req(!is.null(Task_properties$task))
         req(input$selectPlot)
         req(input$plotsPanel)
-        req(input$plotFeatures)
 
         updateTabsetPanel(inputId = "FunctionChoice", selected = input$selectPlot)
         updateTabsetPanel(inputId = "FunctionChoice2", selected = input$selectPlot2)
         updateTabsetPanel(inputId = "FunctionChoice3", selected = input$selectPlot3)
         updateTabsetPanel(inputId = "FunctionChoice4", selected = input$selectPlot4)
 
+        Task_properties$plotRdy <- TRUE
       })
 
 
@@ -643,6 +667,7 @@ VisualizationServer <- function(id, data) {
       # obsereve startButton to recalculate the plots
       observeEvent(input$startButton, {
 
+      req(Task_properties$plotRdy == TRUE)
 
       if(is.null(input$numberPlots))
 
@@ -714,15 +739,15 @@ VisualizationServer <- function(id, data) {
 
 
         if(input$FunctionChoice2 == "PDP")
-          finalPlots$plot2 <- plotPartialDependence(task = Task_properties$task, features = input$plotFeaturesPDP2, learner = learner$model, gridsize = input$gridsizePDP, rug = rugPDP2, plotICE = plotIce2)
+          finalPlots$plot2 <- plotPartialDependence(task = Task_properties$task, features = input$plotFeaturesPDP2, learner = learner$model, gridsize = input$gridsizePDP2, rug = rugPDP2, plotICE = plotIce2)
         else if(input$FunctionChoice2 == "PCP")
-          finalPlots$plot2 <- plotParallelCoordinate(task = Task_properties$task, features = input$plotFeaturesPCP2, autosort = autoSort, labelside = input$labelSide, labelangle = input$labelAngle,
-                                                     constrainrange = input$constrainRange, labeltarget = labelTarget2,  colbarreverse = colbarReverse2)
+          finalPlots$plot2 <- plotParallelCoordinate(task = Task_properties$task, features = input$plotFeaturesPCP2, autosort = autoSort2, labelside = input$labelSide2, labelangle = input$labelAngle2,
+                                                     constrainrange = input$constrainRange2, labeltarget = labelTarget2,  colbarreverse = colbarReverse2)
         else if(input$FunctionChoice2 == "Heatmap")
           if(input$plotFunction2 == "mean")
-            finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = mean, gridsize = input$gridsizeHM, scatterplot = plotPoints2, rug = rugHM2)
+            finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = mean, gridsize = input$gridsizeHM2, scatterplot = plotPoints2, rug = rugHM2)
         else
-          finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = sd, gridsize = input$gridsizeHM, scatterplot = plotPoints2, rug = rugHM2)
+          finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = sd, gridsize = input$gridsizeHM2, scatterplot = plotPoints2, rug = rugHM2)
         else if(input$FunctionChoice2 == "Importance Plot")
 
           finalPlots$plot2 <- plotImportance(task = Task_properties$task, learner = learner$model, loss = input$lossFunction2)
@@ -750,6 +775,7 @@ VisualizationServer <- function(id, data) {
         #Heatmap
         plotPoints3 <- ifelse(input$plotPoints3 == 1, TRUE, FALSE)
         rugHM3 <- ifelse(input$rugHM3 == 1, TRUE, FALSE)
+
 
         if(input$FunctionChoice3 == "PDP")
           if(length(input$plotFeaturesPDP3) == 2)
@@ -818,7 +844,6 @@ VisualizationServer <- function(id, data) {
 
       req(!is.null(Task_properties$task))
 
-
       if(Task_properties$task$task_type == "regr") {
       learner$model = lrn("regr.ranger")
       } else {
@@ -833,15 +858,14 @@ VisualizationServer <- function(id, data) {
         data$subsetData
         data$manipulateData}, {
           Task_properties$task <- NULL
-          Task_properties$task <- NULL
           Task_properties$overview <- NULL
           Task_properties$target <- NULL
-          Task_properties$featNames <- NULL
           Task_properties$featTypes <- NULL
           Task_properties$positive <- NULL
           Task_properties$tableOptions <- NULL
           features_to_use$features <- NULL
-
+          Task_properties$plotRdy <- FALSE
+          Task_properties$featureImputed <- NULL
         })
 
       # observe the task and filter clean it if necessary. This code block is mostly taken from mlr3Shiny.
@@ -864,7 +888,6 @@ VisualizationServer <- function(id, data) {
         ### mlr task is R6 Object, Shiny cannot see, when this object's state changes cause its modified in place
         ### to ensure that the table still updates when the features are removed later on, assign it an extra reactive value
         Task_properties$featTypes <- Task_properties$task$feature_types
-        Task_properties$featNames <- Task_properties$task$feature_names
         if (!identical(Task_properties$task$properties, character(0)) && Task_properties$task$properties == "twoclass") {
           Task_properties$positive <- Task_properties$task$positive
         }
@@ -879,6 +902,11 @@ VisualizationServer <- function(id, data) {
           features = Task_properties$featTypes
         )
       })
+
+
+
+
+
 
 
     }

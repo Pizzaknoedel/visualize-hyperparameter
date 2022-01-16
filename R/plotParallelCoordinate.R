@@ -15,12 +15,15 @@
 #' @param constrainrange (`numeric(2)`) \cr
 #'   A vector with two numeric values between 0 and 1. The vector restrict each column to the values of a range
 #'   for which they are within the quantile of the target variable. If NULL, then no restriction is plotted. Default is NULL.
-#' @param labeltarget (`logical(1)`) \cr
+#' @param labeltarget (`logical`) \cr
 #'   If TRUE, the target will be labeled. Default is TRUE.
-#' @param colbarreverse (`logical(1)`) \cr
+#' @param colbarreverse (`logical`) \cr
 #'   If TRUE, The colorbar will be reversed. Default is FALSE.
-#' @param autosort (`logical(1)`) \cr
+#' @param autosort (`logical`) \cr
 #'   If True, The columns will be ordered. Default is TRUE.
+#' @param numericNA (`character(1)` \cr
+#'   If "Max", the NA values of the column are displayed as maximum value. If "Min", then the NA values are displayed as minimum value.
+#'   Default is "Max".
 #'
 #' @return A [plotly] object.
 #'
@@ -36,12 +39,13 @@
 
 
 plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", labelangle = 0, colbarrange = NULL, constrainrange = NULL,
-                                   labeltarget = TRUE,  colbarreverse = FALSE,  autosort = TRUE) {
+                                   labeltarget = TRUE,  colbarreverse = FALSE, autosort = TRUE, numericNA = "Max") {
 
   # check input
   assert_task(task)
   assert(checkNull(features), checkVector(features), combine = "or")
   assert_choice(labelside, c("Top","Bottom"))
+  assert_choice(numericNA, c("Max","Min"))
   assert_numeric(labelangle, len = 1)
   assert(checkNumeric(colbarrange, len = 2), checkNull(colbarrange))
   assert(checkNumeric(constrainrange, len = 2, lower = 0, upper = 1), checkNull(constrainrange))
@@ -58,17 +62,27 @@ plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", lab
   # retrieve the target and features variables which are stored inside the task
   df <- as.data.frame(task$data(), stringsAsFactors = TRUE)
 
-  # show NA's as an own factor level or as maximum
+
+  # show NA's as an own factor level (if class = factor) or as maximum (if class = numeric)
   n <- length(df)
   for (i in 1:n) {
-    if(is.factor(df[,i]) || is.logical(df[,i])) {
+
+    if (is.logical(df[,i]))
+      df[,i] <- as.factor(df[,i])
+    if (is.character(df[,i]))
+      df[,i] <- as.factor(df[,i])
+
+    if (is.factor(df[,i])) {
       if (sum(is.na(df[,i])) > 0) {
         levels(df[,i]) <- c(levels(df[,i]),"NA")
         df[,i][is.na(df[,i])] <- "NA"
       }
     }
-    else if(is.numeric(df[,i])) {
-      df[,i][is.na(df[,i])] <- max(df[,i], na.rm = TRUE)
+    else if (is.numeric(df[,i])) {
+      if (numericNA == "Max")
+        df[,i][is.na(df[,i])] <- max(df[,i], na.rm = TRUE)
+      else if (numericNA == "Min")
+        df[,i][is.na(df[,i])] <- min(df[,i], na.rm = TRUE)
     }
   }
 

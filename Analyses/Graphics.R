@@ -6,7 +6,7 @@ library(ggpubr)
 library(rstudioapi)
 library(mlr3pipelines)
 toBibtex(citation("iml"))
-read
+
 data <- read.csv("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Data/iaml_glmnet.csv")
 str(data)
 summary(as.factor(data$task_id))
@@ -156,4 +156,7 @@ PDP3_survival_fraction_super
 savePlotAsImage("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/PDP_survival_fraction_super.png", format = "png", width = 700, height = 500)
 
 
-
+#test
+test1 <- plotParallelCoordinate(task)
+test2 <- plotParallelCoordinate(task)
+test1 + test2

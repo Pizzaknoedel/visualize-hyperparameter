@@ -12,9 +12,9 @@
 #'   If NUll, then a Random Forest for regression or classification will be used. Default is NULL.
 #' @param gridsize (`numeric(1)`) \cr
 #'   The number of rectangles/ sections per axis. Default is 20.
-#' @param rug (`logical(1)`) \cr
+#' @param rug (`logical`) \cr
 #'   If TRUE, then a rug will be plotted. Default is TRUE.
-#' @param plotICE (`logical(1)`) \cr
+#' @param plotICE (`logical`) \cr
 #'   If TRUE, then the individual conditional expectations (ICE) will be also plotted. Only available for one feature.
 #'   Default is TRUE.
 #'

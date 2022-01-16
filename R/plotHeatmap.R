@@ -9,9 +9,9 @@
 #'   A summary function used in the rectangles of the grid. The default summary function is [mean].
 #' @param gridsize (`numeric(1)`) \cr
 #'   The number of rectangles per axis. Default value is 20.
-#' @param scatterplot (`logical(1)`) \cr
+#' @param scatterplot (`logical`) \cr
 #'   If TRUE, then a scatterplot will be plotted. Default is FALSE.
-#' @param rug (`logical(1)`) \cr
+#' @param rug (`logical`) \cr
 #'   If TRUE, then a rug will be plotted. Default is TRUE.
 #'
 #' @return A [plotly] object.

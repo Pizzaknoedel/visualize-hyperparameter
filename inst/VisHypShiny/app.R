@@ -23,9 +23,10 @@ for (i in seq_along(server_files)) {
 userhelp <- list(
 "Task Creation Target" = "The target variable needs to be of type factor (categorical) or numeric (a number).",
 "New Column Name" = "You exceeded 20 character limit for a new column name!",
-"Duplicated Columns" = "The data set contains duplicated column names. Check the column and rename it on the Data tab.",
+"Duplicated Columns" = "The data set contains duplicated column names. For this reason the duplicated variable names have been renamed ",
 "Minimum Column" = "You need at least 2 remaning columns to create a task.",
-"No Plot Selected" = "Please choose at least one plot before pressing the recalculate button."
+"No Plot Selected" = "Please choose at least one plot before pressing the recalculate button.",
+"More Column Selected" = "More than one column has been selected for renaming. Please select only one variable!"
 )
 
 #APP UI
