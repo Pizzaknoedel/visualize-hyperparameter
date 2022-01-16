@@ -4,7 +4,7 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE}
+```{r, include = FALSE, warning = FALSE, messages = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -19,7 +19,7 @@ knitr::opts_chunk$set(
 [![R-CMD-check](https://github.com/Pizzaknoedel/visualize-hyperparameter/workflows/R-CMD-check/badge.svg)](https://github.com/Pizzaknoedel/visualize-hyperparameter/actions)
 <!-- badges: end -->
 
-The goal of the "VisHyp" package is to visualize hyperparameter performance dependencies in order to gain insight into which hyperparameter configurations deliver the best performance. For this purpose the following four plots have been implemented: In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values. The heat map contrasts two parameters and allows quick examination of the effects of each configuration combination. The importance plot uses a surrogate learner to represent the importance of each parameter. The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model. The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
+The goal of the "VisHyp" package is to visualize hyperparameter performance dependencies in order to gain insight into which hyperparameter configurations deliver the best performance. For this purpose, the following four plots were created: The Partical Coordinate Plot (PCP), the Partial Dependence Plot (PDP), the Importance Plot and the Heatmap. 
 
 ## Installation
 
@@ -32,26 +32,25 @@ devtools::install_github("Pizzaknoedel/visualize-hyperparameter")
 
 ## Example
 
-This is a basic example which shows you how to plot the four implemented graphics. 
+This is a basic example which shows you how to plot the four implemented graphics. Each plot needs a task created with the [mlr3](https://github.com/mlr-org/mlr3) package.
 
 ```{r example}
-library(VisHyp)
 ## basic example code
-# Each plot needs a task created with the `mlr3` package. 
+library(VisHyp)
 library(mlr3)
-# A task needs to be created
 task = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
-```
 
-```{r plots}
-library(plotly)
+## PCP: In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values. 
+plotParallelCoordinate(task)
 
+## Heatmap: The heat map contrasts two parameters and allows quick examination of the effects of each configuration combination. The importance plot uses a surrogate learner to represent the importance of each parameter.
+plotHeatmap(task, gridsize = 5)
 
-p1 <- plotImportance(task) 
-p2 <- plotPartialDependence(task)
-p3 <- plotHeatmap(task, gridsize = 5) 
+## Importance Plot: The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model.
+plotImportance(task)
 
-subplot(p1, p2, p3, nrows = 3)
+## PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
+plotPartialDependence(task)
 ```
 
 

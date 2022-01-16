@@ -11,20 +11,9 @@
 The goal of the “VisHyp” package is to visualize hyperparameter
 performance dependencies in order to gain insight into which
 hyperparameter configurations deliver the best performance. For this
-purpose the following four plots have been implemented: In the Parallel
-Coordinate Plot, each line represents a configuration and the color of
-the line represents the corresponding performance value. The Parallel
-Coordinate Plot helps to find configuration spaces that contain good
-performance values. The heat map contrasts two parameters and allows
-quick examination of the effects of each configuration combination. The
-importance plot uses a surrogate learner to represent the importance of
-each parameter. The important parameters should be set as optimal as
-possible to get a good performance. To last still the partial Dependence
-Plot was implemented, with which it is possible to examine the
-individual definition areas of the parameters with the help of a
-Surrogats model. The Partial Dependence Plot uses different graphics. So
-it depends on whether the user wants to look at one or more features.
-When viewing a numerical parameter, line plots are used.
+purpose, the following four plots were created: The Partical Coordinate
+Plot (PCP), the Partial Dependence Plot (PDP), the Importance Plot and
+the Heatmap.
 
 ## Installation
 
@@ -39,54 +28,55 @@ devtools::install_github("Pizzaknoedel/visualize-hyperparameter")
 ## Example
 
 This is a basic example which shows you how to plot the four implemented
-graphics.
+graphics. Each plot needs a task created with the
+[mlr3](https://github.com/mlr-org/mlr3) package.
 
 ``` r
+## basic example code
 library(VisHyp)
 #> Warning: replacing previous import 'ggplot2::last_plot' by 'plotly::last_plot'
 #> when loading 'VisHyp'
-## basic example code
-# Each plot needs a task created with the `mlr3` package. 
 library(mlr3)
 #> Warning: Paket 'mlr3' wurde unter R Version 4.0.5 erstellt
-# A task needs to be created
 task = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+
+## PCP: In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values. 
+plotParallelCoordinate(task)
 ```
 
+<img src="man/figures/README-example-1.png" width="100%" />
+
 ``` r
-library(plotly)
-#> Warning: Paket 'plotly' wurde unter R Version 4.0.5 erstellt
-#> Lade nötiges Paket: ggplot2
-#> Warning: Paket 'ggplot2' wurde unter R Version 4.0.5 erstellt
-#> 
-#> Attache Paket: 'plotly'
-#> The following object is masked from 'package:ggplot2':
-#> 
-#>     last_plot
-#> The following object is masked from 'package:stats':
-#> 
-#>     filter
-#> The following object is masked from 'package:graphics':
-#> 
-#>     layout
 
+## Heatmap: The heat map contrasts two parameters and allows quick examination of the effects of each configuration combination. The importance plot uses a surrogate learner to represent the importance of each parameter.
+plotHeatmap(task, gridsize = 5)
+```
 
-p1 <- plotImportance(task) 
+<img src="man/figures/README-example-2.png" width="100%" />
+
+``` r
+
+## Importance Plot: The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model.
+plotImportance(task)
 #> Warning: Paket 'Rcpp' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'paradox' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'tidyr' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'ps' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'palmerpenguins' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'digest' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'utf8' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'parallelly' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'R6' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'ranger' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'R6' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'backports' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'ggplot2' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'pillar' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'rlang' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'uuid' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'data.table' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'callr' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'rmarkdown' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'webshot' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'mlr3pipelines' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'htmlwidgets' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'xfun' wurde unter R Version 4.0.5 erstellt
@@ -103,20 +93,28 @@ p1 <- plotImportance(task)
 #> Warning: Paket 'mlr3learners' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'future.apply' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'stringi' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'farver' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'ellipsis' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'vctrs' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'prediction' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'crosstalk' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'processx' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'colorspace' wurde unter R Version 4.0.5 erstellt
+#> Warning: Paket 'plotly' wurde unter R Version 4.0.5 erstellt
 #> Warning: Paket 'knitr' wurde unter R Version 4.0.5 erstellt
 #> Scale for 'x' is already present. Adding another scale for 'x', which will
 #> replace the existing scale.
-p2 <- plotPartialDependence(task)
-p3 <- plotHeatmap(task, gridsize = 5) 
-
-subplot(p1, p2, p3, nrows = 3)
 ```
 
-<img src="man/figures/README-plots-1.png" width="100%" />
+<img src="man/figures/README-example-3.png" width="100%" />
+
+``` r
+
+## PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
+plotPartialDependence(task)
+```
+
+<img src="man/figures/README-example-4.png" width="100%" />
 
 ``` r
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write

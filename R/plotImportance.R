@@ -68,6 +68,7 @@ plotImportance <- function(task, learner = NULL, loss = "mae") {
   importancePlot <- iml::FeatureImp$new(model, loss = loss)
 
   # add a title to the ggplot2 object
+
   importancePlot <- plot(importancePlot) +
   scale_x_continuous(sprintf("Parameter Importance (loss: %s)", loss)) +
     labs(title = "Importance Plot")
