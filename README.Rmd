@@ -57,6 +57,8 @@ plotPartialDependence(task)
 knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png")
 ```
 
+![test]("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png")
+
 ```r 
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write
 launchVisHyp()

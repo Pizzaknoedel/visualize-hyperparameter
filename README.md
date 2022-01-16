@@ -75,6 +75,8 @@ knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Lat
 
 <img src="D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png" width="100%" />
 
+![test](%22D:/Simon/Desktop/Studium/6.%20Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png%22)
+
 ``` r
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write
 launchVisHyp()
