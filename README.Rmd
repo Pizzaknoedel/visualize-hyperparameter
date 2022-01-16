@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
   fig.path = "man/figures/README-",
-  out.width = "100%"
+  out.width = "50%"
 )
 ```
 
@@ -34,7 +34,7 @@ devtools::install_github("Pizzaknoedel/visualize-hyperparameter")
 
 This is a basic example which shows you how to plot the four implemented graphics. Each plot needs a task created with the [mlr3](https://github.com/mlr-org/mlr3) package.
 
-```{r example}
+```{r example, warning = FALSE, messages = FALSE, }
 ## basic example code
 library(VisHyp)
 library(mlr3)

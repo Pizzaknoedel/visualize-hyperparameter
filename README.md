@@ -34,10 +34,7 @@ graphics. Each plot needs a task created with the
 ``` r
 ## basic example code
 library(VisHyp)
-#> Warning: replacing previous import 'ggplot2::last_plot' by 'plotly::last_plot'
-#> when loading 'VisHyp'
 library(mlr3)
-#> Warning: Paket 'mlr3' wurde unter R Version 4.0.5 erstellt
 task = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
 
 ## PCP: In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values. 
@@ -58,50 +55,6 @@ plotHeatmap(task, gridsize = 5)
 
 ## Importance Plot: The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model.
 plotImportance(task)
-#> Warning: Paket 'Rcpp' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'paradox' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'tidyr' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'ps' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'palmerpenguins' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'digest' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'utf8' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'parallelly' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'ranger' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'R6' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'backports' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'ggplot2' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'pillar' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'rlang' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'uuid' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'data.table' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'callr' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'rmarkdown' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'webshot' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'mlr3pipelines' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'htmlwidgets' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'xfun' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'Metrics' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'htmltools' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'tidyselect' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'lgr' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'mlr3misc' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'fansi' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'crayon' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'dplyr' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'withr' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'lifecycle' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'mlr3learners' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'future.apply' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'stringi' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'farver' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'ellipsis' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'vctrs' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'prediction' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'crosstalk' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'processx' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'colorspace' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'plotly' wurde unter R Version 4.0.5 erstellt
-#> Warning: Paket 'knitr' wurde unter R Version 4.0.5 erstellt
 #> Scale for 'x' is already present. Adding another scale for 'x', which will
 #> replace the existing scale.
 ```
