@@ -41,7 +41,7 @@ task = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss"
 plotParallelCoordinate(task)
 ```
 
-<img src="man/figures/README-example-1.png" width="200%" />
+<img src="man/figures/README-example-1.png" width="100%" />
 
 ``` r
 
@@ -49,7 +49,7 @@ plotParallelCoordinate(task)
 plotHeatmap(task, gridsize = 5)
 ```
 
-<img src="man/figures/README-example-2.png" width="200%" />
+<img src="man/figures/README-example-2.png" width="100%" />
 
 ``` r
 
@@ -59,7 +59,7 @@ plotImportance(task)
 #> replace the existing scale.
 ```
 
-<img src="man/figures/README-example-3.png" width="200%" />
+<img src="man/figures/README-example-3.png" width="100%" />
 
 ``` r
 
@@ -67,7 +67,13 @@ plotImportance(task)
 plotPartialDependence(task)
 ```
 
-<img src="man/figures/README-example-4.png" width="200%" />
+<img src="man/figures/README-example-4.png" width="100%" />
+
+``` r
+knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png")
+```
+
+<img src="D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png" width="100%" />
 
 ``` r
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write
@@ -96,7 +102,7 @@ example workflow can be found here:
 
 You can also embed plots, for example:
 
-<img src="man/figures/README-pressure-1.png" width="200%" />
+<img src="man/figures/README-pressure-1.png" width="100%" />
 
 In that case, don’t forget to commit and push the resulting figure
 files, so they display on GitHub and CRAN.

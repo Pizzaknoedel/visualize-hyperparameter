@@ -155,13 +155,13 @@ plotParallelCoordinate(lcbenchTask, labelangle = 10)
 #### Limitation to very good configurations
 
 ```{r,  out.width="100%"}
-knitr::include_graphics("lcbench_Best_PCP.png")
+knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png")
 ```
 
 #### Limitation to bad configurations
 
 ```{r, out.width="100%"}
-knitr::include_graphics("lcbench_Bad_PCP.png")
+knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Bad_PCP.png")
 ```
 
 ### {.unlisted .unnumbered} 
@@ -983,14 +983,14 @@ plotParallelCoordinate(superTask, labelangle = 10, colbarrange = c(-0.21, -0.3))
 #### Limitation to very good configurations
 
 ```{r Results superSmashy PCP1,  out.width="100%"}
-knitr::include_graphics("Super_Best_PCP.png")
+knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/Super_Best_PCP.png")
 ```
 
 
 #### Limitation to bad configurations
 
 ```{r Results superSmashy PCP2, out.width="100%"}
-knitr::include_graphics("Super_Bad_PCP.png")
+knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/Super_Bad_PCP.png")
 ```
 
 ### {.unlisted .unnumbered} 
