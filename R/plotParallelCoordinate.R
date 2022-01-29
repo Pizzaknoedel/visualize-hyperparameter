@@ -24,6 +24,8 @@
 #' @param numericNA (`character(1)` \cr
 #'   If "Max", the NA values of the column are displayed as maximum value. If "Min", then the NA values are displayed as minimum value.
 #'   Default is "Max".
+#' @param title (`logical`) \cr
+#'   If TRUE, then a title will be plotted. Default is FALSE
 #'
 #' @return A [plotly] object.
 #'
@@ -39,7 +41,7 @@
 
 
 plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", labelangle = 0, colbarrange = NULL, constrainrange = NULL,
-                                   labeltarget = TRUE,  colbarreverse = FALSE, autosort = TRUE, numericNA = "Max") {
+                                   labeltarget = TRUE,  colbarreverse = FALSE, autosort = TRUE, numericNA = "Max", title = FALSE) {
 
   # check input
   assert_task(task)
@@ -173,6 +175,11 @@ plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", lab
                                         cmax = max(colbarrange),
                                         colorbar = list(title = list(text = ifelse(labeltarget == TRUE, targetName, ""), side = labelside))),
                             dimensions = hyperparam)
+
+  # create a title
+  if (title == TRUE)
+  pcp <- pcp %>%
+    layout(title = list(text = "Parallel Coordinate Plot", x = 0, y = 3, xref = "paper", yref ="paper"))
 
   pcp
 

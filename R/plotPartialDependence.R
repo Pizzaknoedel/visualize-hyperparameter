@@ -17,6 +17,8 @@
 #' @param plotICE (`logical`) \cr
 #'   If TRUE, then the individual conditional expectations (ICE) will be also plotted. Only available for one feature.
 #'   Default is TRUE.
+#' @param title (`logical`) \cr
+#'   If TRUE, then a title will be plotted. Default is TRUE.
 #'
 #' @return A [plotly] object.
 #'
@@ -31,7 +33,7 @@
 #' @export
 
 
-plotPartialDependence <- function(task, features = NULL, learner = NULL, gridsize = 20, rug = TRUE, plotICE = TRUE) {
+plotPartialDependence <- function(task, features = NULL, learner = NULL, gridsize = 20, rug = TRUE, plotICE = TRUE, title = TRUE) {
   # take the first feature if no features are specified
   if(is.null(features))
     features <- task$feature_names[c(1)]
@@ -95,8 +97,12 @@ plotPartialDependence <- function(task, features = NULL, learner = NULL, gridsiz
   else if(length(features) == 2)
     pdp <- iml::FeatureEffect$new(model, feature = features, method = "pdp", grid.size = gridsize)
 
-  # add a title to the ggplot2 object
-  pdp <- plot(pdp, rug = rug) +
+  # prepare ggplot2 object
+  pdp <- plot(pdp, rug = rug)
+
+  # create a title
+  if (title == TRUE)
+    pdp <- pdp +
     ggtitle("Partial Dependence Plot")
 
   # create a plotly object

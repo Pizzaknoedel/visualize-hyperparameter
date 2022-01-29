@@ -484,6 +484,7 @@ VisualizationServer <- function(id, data) {
           renderPlotly(finalPlots$plot3)
         else
           renderPlotly(finalPlots$plot4)
+
       })
 
       # UI-Output: Plot 2 Calculation
@@ -528,7 +529,6 @@ VisualizationServer <- function(id, data) {
         req(!is.null(Task_properties$task))
         req(input$FunctionChoice)
         req(counter$plotNumber)
-        req()
 
         if(counter$plotNumber == 1) {
           fluidRow(
@@ -613,7 +613,7 @@ VisualizationServer <- function(id, data) {
         }
 
         # make the task more robust for feature selection
-
+        data$subsetData <- as.data.frame(data$subsetData)
         n <- length(data$subsetData)
         featureImputed <- c()
         for (i in 1:n) {
@@ -866,6 +866,18 @@ VisualizationServer <- function(id, data) {
           features_to_use$features <- NULL
           Task_properties$plotRdy <- FALSE
           Task_properties$featureImputed <- NULL
+        })
+
+      #reset plots if the original Data change
+      observeEvent({data$originalData},{
+          finalPlots$plot1 <- NULL
+          finalPlots$plot2 <- NULL
+          finalPlots$plot3 <- NULL
+          finalPlots$plot4 <- NULL
+          plot1()
+          plot2()
+          plot3()
+          plot4()
         })
 
       # observe the task and filter clean it if necessary. This code block is mostly taken from mlr3Shiny.

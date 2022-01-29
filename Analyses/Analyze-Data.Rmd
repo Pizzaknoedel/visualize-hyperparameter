@@ -143,6 +143,17 @@ We can see that many good results were obtained, but not nearly all of the best 
 
 Most interestingly, we get many good results, but also some seemingly bad ones. This could be due to hidden interactions that were not found, or inaccuracies in the constraints placed on the parameters by the visualization plots. In the second possibility, the poorer performance values could be due to errors in the interpretation of the plots. But also difficulties with the surrogate model could be decisive if predicted values of the performance values are not determined correctly. In addition, an inappropriate grid size in a PCP can lead to inaccuracies. 
 
+
+```{r}
+summary(lcbenchEvaluation$yval)
+#proportion
+length(lcbenchEvaluation$yval)/length(smashy_lcbench$yval)
+#top congifuration
+sum(lcbenchYval >= quantile(smashy_lcbench$yval, 0.95))/length(lcbenchYval)
+sum(smashy_lcbench$yval >= quantile(smashy_lcbench$yval, 0.95))/length(smashy_lcbench$yval)
+```
+
+
 ### Visual Overview {.tabset}
 
 
@@ -971,6 +982,21 @@ sort(match(superYval, superYvalOriginal), decreasing = FALSE)
 ```
 
 We can see that many good results were obtained, but not nearly all of the best configurations were found out. This can be explained by the fact that we often imposed constraints to reduce the size of the data set. For example, for some categorical parameters, we always chose one factor even though we knew that other categories could also yield good values. Furthermore, numerical parameters were partly restricted, although it was known that for some very good configurations, very good yval values can also be obtained outside the range. In the end, however, we were able to show that the ranges we restricted lead to almost exclusively above-average or good performance values. 
+
+```{r}
+#Anzahl an Beobachtungen
+length(superYval)
+#summary
+summary(superYval)
+summary(superSmashy$yval)
+#proportion
+length(superYval)/length(superSmashy$yval)
+#top congifuration
+sum(superYval >= quantile(superSmashy$yval, 0.95))/length(superYval)
+sum(superYval >= quantile(superSmashy$yval, 0.8))/length(superYval)
+sum(superYval >= quantile(superSmashy$yval, 0.7))/length(superYval)
+sum(superYval >= quantile(superSmashy$yval, 0.65))/length(superYval)
+```
 
 ### Visual Overview {.tabset} 
 

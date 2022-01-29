@@ -10,6 +10,8 @@
 #' @param loss (`character(1)` \cr
 #'   The loss function to be used. It can be chosen between "ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
 #'   "mdae", "msle", "percent_bias", "rae", "rmse", "rmsle", "rse", "rrse", "smape". Default is "mae".
+#' @param title (`logical`) \cr
+#'   If TRUE, then a title will be plotted. Default is TRUE.
 #'
 #' @return A [plotly] object.
 #'
@@ -24,7 +26,7 @@
 #' @export
 
 
-plotImportance <- function(task, learner = NULL, loss = "mae") {
+plotImportance <- function(task, learner = NULL, loss = "mae", title = TRUE) {
 
   # take a Random Forest if no Learner is specified
   if (is.null(learner)) {
@@ -67,11 +69,16 @@ plotImportance <- function(task, learner = NULL, loss = "mae") {
   # calculate the importance of every feature and store the results
   importancePlot <- iml::FeatureImp$new(model, loss = loss)
 
-  # add a title to the ggplot2 object
+  # prepare the ggplot2 object
+  importancePlot <- plot(importancePlot)
 
-  importancePlot <- plot(importancePlot) +
-  scale_x_continuous(sprintf("Parameter Importance (loss: %s)", loss)) +
+  # create a title
+  if (title == TRUE)
+    importancePlot <- importancePlot +
     labs(title = "Importance Plot")
+
+  #replace name x-axis
+  importancePlot$scales$scales[[1]]$name <- (sprintf("Parameter Importance (loss: %s)", loss))
 
   # create a plotly object
     importancePlot <- ggplotly(importancePlot)

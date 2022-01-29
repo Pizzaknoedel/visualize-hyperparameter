@@ -5,51 +5,66 @@ library(patchwork)
 library(ggpubr)
 library(rstudioapi)
 library(mlr3pipelines)
+library(iml)
 toBibtex(citation("iml"))
 
-data <- read.csv("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Data/iaml_glmnet.csv")
+# Produced graphics as an example for the bachelor thesis
+
+
+data <- read_csv("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Data/iaml_rpart.csv")
 str(data)
 summary(as.factor(data$task_id))
+summary(as.factor(data$trainsize))
+set.seed(232234)
+testsample <- sample(1:nrow(testData), 2000, replace = TRUE)
 testData <- data[data$task_id == 1489,]
-testData <- testData[, names(testData) %in% c("f1", "rammodel", "ias", "mmce", "alpha", "nf", "logloss")]
-task = TaskRegr$new(id = "task_glmnet", backend = testData, target = "logloss")
+testData <- testData[testData$trainsize == 1,]
+testData <- testData[testsample, ]
+
+#testData <- testData[, names(testData) %in% c("num.trees", "replace", "sample.fraction", "mtry.ratio", "respect.unordered.factors", "min.node.size","splitrule", "logloss")]
+df <- testData[, names(testData) %in% c("cp", "maxdepth", "minbucket", "minsplit", "logloss")]
+#library(rpart)
+#?rpart.control
+task = TaskRegr$new(id = "task_glmnet", backend = df, target = "logloss")
 po = po("imputehist") %>>% po("fixfactors") %>>% po("imputeoor")  %>>% po("removeconstants")
 task = po$train(task)[[1]]
 df <- task$data()
 learner = lrn("regr.ranger", num.trees = 100)
 learner$train(task)
-groups = list(
-  alpha = c("alpha"),
-  f1 = c("f1"),
-  alpha_f1 = c("f1", "alpha")
-)
-model <- iml::Predictor$new(learner, data = df, y = "logloss")
-importancePlot <- iml::FeatureImp$new(model, loss = "mae", features = c("f1", "alpha"))
-plot(importancePlot)
+df <- as.data.frame(df)
+n <- length(df)
+for (i in 1:n) {
+  if(is.logical(df[,i]))
+    df[,i] <- as.factor(df[,i])
+  if(is.character(df[,i]))
+    df[,i] <- as.factor(df[,i])
+}
+str(df)
+model <- Predictor$new(learner, data = df, y = "logloss")
 
 # Heatmap
-Heatmap_Theory <- plotHeatmap(task, c("nf","alpha"), gridsize = 10, rug = FALSE)
+Heatmap_Theory <- plotHeatmap(task, c("maxdepth","minbucket"), gridsize = 10, rug = FALSE)
 Heatmap_Theory
 save_image(Heatmap_Theory, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/Heatmap_Theory.png",
            width = 700, height = 500, scale = 2 )
 
 # PCP
-plotParallelCoordinate_Theory <- plotParallelCoordinate(task, labelangle = 0, colbarreverse = TRUE)
+plotParallelCoordinate_Theory <- plotParallelCoordinate(task, labelangle = 0, colbarreverse = TRUE,colbarrange = c(0.37, 0.51), autosort = FALSE)
 plotParallelCoordinate_Theory
 save_image(plotParallelCoordinate_Theory, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/plotParallelCoordinate_Theory.png",
            width = 700, height = 500, scale = 2 )
 
-#Scatterplot
-scatter1 <- ggplot(data, aes(x=mmce,y=logloss)) + geom_point()
-scatter1
-scatter2 <- ggplot( data, aes(x=mmce,y=ias)) + geom_point(aes(color = logloss))
+#Scatterplot with complexity parameter
+scatter1 <- ggplot(df, aes(x=minbucket,y=logloss)) + geom_point()
+scatter1 #"cp", "maxdepth", "minbucket", "minsplit"
+scatter2 <- ggplot( df, aes(x=minbucket,y=minsplit)) + geom_point(aes(color = logloss))
 scatter2
 scatter1 + scatter2
 savePlotAsImage("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/Scatter_Theory.png", format = "png", width = 700, height = 500)
 
 
 # PDP
-PDP_Theory <- plotPartialDependence(task, "rammodel", plotICE = FALSE)
+PDP_Theory <- plotPartialDependence(task, "maxdepth", plotICE = FALSE, rug = FALSE)
 PDP_Theory
 save_image(PDP_Theory, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/PDP_Theory.png",
            width = 700, height = 500, scale = 2 )
@@ -61,49 +76,37 @@ Importance_Theory
 save_image(Importance_Theory, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/Importance_Theory.png",
            width = 700, height = 500, scale = 2 )
 
-# ICE plot
-testData2 <- data[, names(data) %in% c("f1", "rammodel", "ias", "mmce", "alpha", "nf", "ramtrain", "logloss")]
-testsample <- sample(1:nrow(testData2), 1000, replace = TRUE)
-testData2 <- testData2[testsample, ]
-task2 = TaskRegr$new(id = "task_glmnet", backend = testData2, target = "logloss")
-ICE_Theory <- plotPartialDependence(task2, "ramtrain", plotICE = TRUE, rug = FALSE)
-ICE_Theory <- ICE_Theory +
-  ggplot2::ggtitle("PDP + ICE")
 
 # ALE
-learner = lrn("regr.ranger", num.trees = 100)
-features <- "ramtrain"
-
-po = po("imputehist") %>>% po("fixfactors") %>>% po("imputeoor")  %>>% po("removeconstants")
-task2 = po$train(task2)[[1]]
-learner$train(task2)
-df <- task2$data()
-df <- as.data.frame(df)
-targetName <- task2$target_names
+features <- "maxdepth"
+targetName <- task$target_names
 targetVector <-  df[[targetName]]
 index <- which(names(df) != targetName)
 df <- df[index]
 model <- iml::Predictor$new(learner, data = df, y = targetVector)
-pdp <- iml::FeatureEffect$new(model, feature = features, method = "ale", grid.size = 20)
-ALE_Theory <- plot(pdp, rug = FALSE) +
+ALE <- iml::FeatureEffect$new(model, feature = features, method = "ale", grid.size = 20)
+ALE_Theory <- plot(ALE, rug = FALSE) +
   ggplot2::ggtitle("ALE Plot")
+ALE_Theory
+
+# ICE plot
+ICE <- iml::FeatureEffect$new(model, feature = features, method = "pdp+ice", grid.size = 20)
+ICE_Theory <- plot(ICE, rug = FALSE) +
+  ggplot2::ggtitle("PDP + ICE")
+ICE_Theory
 
 ICE_ALE_Theory <- ICE_Theory + ALE_Theory
 ICE_ALE_Theory
 savePlotAsImage("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/ICE_ALE_Theory.png", format = "png", width = 700, height = 500)
 
 
-?save_image
-subplot(Heatmap_Theory, PDP_Theory,nrows = 2)
-?subplot
-
 
 # PDP vs PDP + ICE
-testData3 <- read_csv("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Data/data/iaml_ranger/data.csv")
-str(testData3)
-testsample2 <- sample(1:nrow(testData3), 1000, replace = TRUE)
-testData3 <- testData3[testsample2, ]
-testData3 <- as.data.frame(testData3)
+data2 <- read_csv("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Data/iaml_ranger.csv")
+str(data2)
+testsample2 <- sample(1:nrow(data2), 2000, replace = TRUE)
+data2 <- data2[testsample2, ]
+testData3 <- as.data.frame(data2)
 n <- length(testData3)
 for (i in 1:n) {
   if(is.logical(testData3[,i]))
@@ -112,7 +115,7 @@ for (i in 1:n) {
     testData3[,i] <- as.factor(testData3[,i])
 }
 task3 = TaskRegr$new(id = "task_glmnet", backend = testData3, target = "logloss")
-plotPartialDependence(task3, c("splitrule","rampredict"))
+plotPartialDependence(task3, c("splitrule","sample.fraction"))
 ICE_Categorical1 <- plotPartialDependence(task3, c("splitrule"), plotICE = FALSE,rug = FALSE)
 ICE_Categorical2 <- plotPartialDependence(task3, c("splitrule"), plotICE = TRUE, rug = FALSE)
 PDP2_Theory <- ICE_Categorical1 + ICE_Categorical2
@@ -156,7 +159,40 @@ PDP3_survival_fraction_super
 savePlotAsImage("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/PDP_survival_fraction_super.png", format = "png", width = 700, height = 500)
 
 
-#test
-test1 <- plotParallelCoordinate(task)
-test2 <- plotParallelCoordinate(task)
-test1 + test2
+
+#Git
+n <- length(smashy_super)
+for (i in 1:n) {
+  if(is.logical(smashy_super[,i]))
+    smashy_super[,i] <- as.factor(smashy_super[,i])
+  if(is.character(smashy_super[,i]))
+    smashy_super[,i] <- as.factor(smashy_super[,i])
+}
+
+task = TaskRegr$new(id = "task_glmnet", backend = smashy_super, target = "yval")
+learner = lrn("regr.ranger", num.trees = 100)
+learner$train(task)
+model <- iml::Predictor$new(learner, data = smashy_super, y = "yval")
+p1 <- iml::FeatureEffect$new(model, feature = "surrogate_learner", method = "pdp+ice", grid.size = 10)
+p1 <- plot(p1, rug = FALSE) +
+  ggtitle("Partial Dependence Plot")
+p1
+
+p2 <- iml::FeatureEffect$new(model, feature = "random_interleave_fraction", method = "pdp+ice", grid.size = 10)
+p2 <- plot(p2, rug = TRUE) +
+  ggtitle("Partial Dependence Plot")
+p2
+
+legend <- paste0("yval", " (", as.character(substitute(mean)), ")")
+p3 <- ggplot(smashy_super, aes_string(x = "sample", y = "surrogate_learner", z = "yval")) +
+  geom_tile(stat = "summary_2d", fun = mean, bins = 10) +
+  labs(title = "Heatmap", fill = legend)
+p3
+
+p4 <- iml::FeatureImp$new(model, loss = "mae")
+p4 <- plot(p4) +
+  scale_x_continuous(sprintf("Parameter Importance (loss: %s)", "mae")) +
+  labs(title = "Importance Plot")
+p4
+plots <- (p1 | p2 ) / (p3 | p4 )
+plots

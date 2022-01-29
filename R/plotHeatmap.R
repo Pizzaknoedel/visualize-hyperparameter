@@ -13,6 +13,8 @@
 #'   If TRUE, then a scatterplot will be plotted. Default is FALSE.
 #' @param rug (`logical`) \cr
 #'   If TRUE, then a rug will be plotted. Default is TRUE.
+#' @param title (`logical`) \cr
+#'   If TRUE, then a title will be plotted. Default is TRUE.
 #'
 #' @return A [plotly] object.
 #'
@@ -27,7 +29,7 @@
 #' @export
 
 
-plotHeatmap <- function(task, features = NULL, fun = mean, gridsize = 20, scatterplot = FALSE, rug = TRUE) {
+plotHeatmap <- function(task, features = NULL, fun = mean, gridsize = 20, scatterplot = FALSE, rug = TRUE, title = TRUE) {
 
   # take the first two features if no features are selected yet
   if(is.null(features))
@@ -55,13 +57,19 @@ plotHeatmap <- function(task, features = NULL, fun = mean, gridsize = 20, scatte
 
   # create a heatmap with ggplot2
   plotData <-  ggplot(data, aes_string(x = features[1], y = features[2], z = targetName)) +
-      geom_tile(stat = "summary_2d", fun = fun, bins = gridsize) +
-      labs(title = "Heatmap", fill = legend)
+      geom_tile(stat = "summary_2d", fun = fun, bins = gridsize)
 
+  # create a title
+  if (title == TRUE)
+  plotData <- plotData +
+      labs(title = "Heatmap")
+
+  # create a rug
   if (rug == TRUE)
       plotData <- plotData +
       geom_rug(alpha = 0.2, sides = "bl")
 
+  # show a scatterplot
   if (scatterplot == TRUE)
       plotData  <- plotData +
       geom_point()
