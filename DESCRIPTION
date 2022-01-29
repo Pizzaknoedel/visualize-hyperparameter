@@ -24,5 +24,11 @@ Imports:
     shiny,
     corrplot,
     stats,
-    ranger
+    ranger,
+    shinyalert,
+    shinyjs,
+    shinyWidgets,
+    shinyBS,
+    stringr,
+    DT
 LazyData: true

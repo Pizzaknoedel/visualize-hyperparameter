@@ -35,47 +35,24 @@ graphics. Each plot needs a task created with the
 ## basic example code
 library(VisHyp)
 library(mlr3)
-task = TaskRegr$new(id = "task_glmnet", backend = glmnet_ela, target = "logloss")
+task = TaskRegr$new(id = "task_glmnet", backend = smashy_super, target = "yval")
 
 ## PCP: In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values. 
-plotParallelCoordinate(task)
-```
-
-<img src="man/figures/README-example-1.png" width="100%" />
-
-``` r
+plotParallelCoordinate(task, labelangle = 15)
 
 ## Heatmap: The heat map contrasts two parameters and allows quick examination of the effects of each configuration combination. The importance plot uses a surrogate learner to represent the importance of each parameter.
-plotHeatmap(task, gridsize = 5)
-```
-
-<img src="man/figures/README-example-2.png" width="100%" />
-
-``` r
+plotHeatmap(task, gridsize = 10, features = c())
 
 ## Importance Plot: The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model.
 plotImportance(task)
-#> Scale for 'x' is already present. Adding another scale for 'x', which will
-#> replace the existing scale.
-```
-
-<img src="man/figures/README-example-3.png" width="100%" />
-
-``` r
 
 ## PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
 plotPartialDependence(task)
 ```
 
-<img src="man/figures/README-example-4.png" width="100%" />
-
 ``` r
-knitr::include_graphics("Analyses/lcbench_Best_PCP.png")
+#![]("https://github.com/Pizzaknoedel/visualize-hyperparameter/tree/main/man/figures/lcbench_Best_PCP.png")
 ```
-
-<img src="Analyses/lcbench_Best_PCP.png" width="100%" />
-
-![test](%22Analyses/lcbench_Best_PCP.png%22)
 
 ``` r
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write

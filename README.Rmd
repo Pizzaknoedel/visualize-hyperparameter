@@ -54,8 +54,11 @@ plotPartialDependence(task)
 ```
 
 
+```{r}
+#![]("https://github.com/Pizzaknoedel/visualize-hyperparameter/tree/main/man/figures/lcbench_Best_PCP.png")
 
-![]("https://github.com/Pizzaknoedel/visualize-hyperparameter/tree/main/man/figures/lcbench_Best_PCP.png")
+```
+
 
 ```r 
 # After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write
