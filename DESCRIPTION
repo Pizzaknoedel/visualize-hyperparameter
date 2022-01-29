@@ -30,5 +30,6 @@ Imports:
     shinyWidgets,
     shinyBS,
     stringr,
-    DT
+    DT,
+    data.table
 LazyData: true

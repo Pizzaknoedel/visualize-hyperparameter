@@ -34,8 +34,6 @@ VisualizationServer <- function(id, data) {
         else
         plotName <- counter$plotType
 
-
-
          tabsetPanel(
              id = ns("FunctionChoice"),
              type = "hidden",
@@ -477,13 +475,25 @@ VisualizationServer <- function(id, data) {
         if(is.null(input$numberPlots))
           return()
         else if(min(input$numberPlots) == 1)
-          renderPlotly(finalPlots$plot1)
+          if(is.ggplot(finalPlots$plot1))
+            renderPlot(finalPlots$plot1)
+          else
+            renderPlotly(finalPlots$plot1)
         else if(min(input$numberPlots) == 2)
-          renderPlotly(finalPlots$plot2)
+          if(is.ggplot(finalPlots$plot2))
+            renderPlot(finalPlots$plot2)
+          else
+            renderPlotly(finalPlots$plot2)
         else if(min(input$numberPlots) == 3)
-          renderPlotly(finalPlots$plot3)
+          if(is.ggplot(finalPlots$plot3))
+            renderPlot(finalPlots$plot3)
+          else
+            renderPlotly(finalPlots$plot3)
         else
-          renderPlotly(finalPlots$plot4)
+          if(is.ggplot(finalPlots$plot4))
+            renderPlot(finalPlots$plot4)
+          else
+            renderPlotly(finalPlots$plot4)
 
       })
 
@@ -495,11 +505,20 @@ VisualizationServer <- function(id, data) {
 
         plot1 <- min(input$numberPlots)
         if(2 %in% input$numberPlots & 2 > plot1)
-          renderPlotly(finalPlots$plot2)
+          if(is.ggplot(finalPlots$plot2))
+            renderPlot(finalPlots$plot2)
+          else
+            renderPlotly(finalPlots$plot2)
         else if(3 %in% input$numberPlots & 3 > plot1)
-          renderPlotly(finalPlots$plot3)
+          if(is.ggplot(finalPlots$plot3))
+            renderPlot(finalPlots$plot3)
+          else
+            renderPlotly(finalPlots$plot3)
         else
-          renderPlotly(finalPlots$plot4)
+          if(is.ggplot(finalPlots$plot4))
+            renderPlot(finalPlots$plot4)
+        else
+            renderPlotly(finalPlots$plot4)
       })
 
       # UI-Output: Plot 3 Calculation
@@ -511,13 +530,22 @@ VisualizationServer <- function(id, data) {
         plot1 <- min(input$numberPlots)
         plot2 <- input$numberPlots[2]
         if(3 %in% input$numberPlots & 3 > plot2)
-          renderPlotly(finalPlots$plot3)
+          if(is.ggplot(finalPlots$plot3))
+            renderPlot(finalPlots$plot3)
+          else
+            renderPlotly(finalPlots$plot3)
         else
-          renderPlotly(finalPlots$plot4)
+          if(is.ggplot(finalPlots$plot4))
+            renderPlot(finalPlots$plot4)
+          else
+            renderPlotly(finalPlots$plot4)
       })
 
       # UI-Output: Plot 4 Calculation
       plot4 <- reactive({
+        if(is.ggplot(finalPlots$plot4))
+          renderPlot(finalPlots$plot4)
+        else
           renderPlotly(finalPlots$plot4)
       })
 
@@ -693,6 +721,7 @@ VisualizationServer <- function(id, data) {
         autoSort <- ifelse(input$autoSort == 1, TRUE, FALSE)
         colbarReverse <- ifelse(input$colbarReverse == 1, TRUE, FALSE)
         labelTarget <- ifelse(input$labelTarget == 1, TRUE, FALSE)
+        title <- ifelse(abs(input$labelAngle) > 10, FALSE, TRUE)
 
         #Heatmap
         plotPoints <- ifelse(input$plotPoints == 1, TRUE, FALSE)
@@ -702,12 +731,15 @@ VisualizationServer <- function(id, data) {
           finalPlots$plot1 <- plotPartialDependence(task = Task_properties$task, features = input$plotFeaturesPDP, learner = learner$model, gridsize = input$gridsizePDP, rug = rugPDP, plotICE = plotIce)
         else if(input$FunctionChoice == "PCP")
           finalPlots$plot1 <- plotParallelCoordinate(task = Task_properties$task, features = input$plotFeaturesPCP, autosort = autoSort, labelside = input$labelSide, labelangle = input$labelAngle,
-                                                     constrainrange = input$constrainRange, labeltarget = labelTarget,  colbarreverse = colbarReverse)
+                                                     constrainrange = input$constrainRange, labeltarget = labelTarget,  colbarreverse = colbarReverse, title = title)
         else if(input$FunctionChoice == "Heatmap")
-          if(input$plotFunction == "mean")
+          if(length(input$plotFeaturesHM) != 2) {
+            shinyalert(title = "please select two parameters!", text = userhelp[["Not enough Parameter"]], closeOnClickOutside = TRUE, animation = FALSE)
+            finalPlots$plot1 <- NULL }
+          else if(input$plotFunction == "mean")
             finalPlots$plot1 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM, fun = mean, gridsize = input$gridsizeHM, scatterplot = plotPoints, rug = rugHM)
-        else
-          finalPlots$plot1 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM, fun = sd, gridsize = input$gridsizeHM, scatterplot = plotPoints, rug = rugHM)
+          else
+            finalPlots$plot1 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM, fun = sd, gridsize = input$gridsizeHM, scatterplot = plotPoints, rug = rugHM)
         else if(input$FunctionChoice == "Importance Plot")
 
           finalPlots$plot1 <- plotImportance(task = Task_properties$task, learner = learner$model, loss = input$lossFunction)
@@ -732,6 +764,7 @@ VisualizationServer <- function(id, data) {
         autoSort2 <- ifelse(input$autoSort2 == 1, TRUE, FALSE)
         colbarReverse2 <- ifelse(input$colbarReverse2 == 1, TRUE, FALSE)
         labelTarget2 <- ifelse(input$labelTarget2 == 1, TRUE, FALSE)
+        title2 <- ifelse(abs(input$labelAngle2) > 10, FALSE, TRUE)
 
         #Heatmap
         plotPoints2 <- ifelse(input$plotPoints2 == 1, TRUE, FALSE)
@@ -742,12 +775,15 @@ VisualizationServer <- function(id, data) {
           finalPlots$plot2 <- plotPartialDependence(task = Task_properties$task, features = input$plotFeaturesPDP2, learner = learner$model, gridsize = input$gridsizePDP2, rug = rugPDP2, plotICE = plotIce2)
         else if(input$FunctionChoice2 == "PCP")
           finalPlots$plot2 <- plotParallelCoordinate(task = Task_properties$task, features = input$plotFeaturesPCP2, autosort = autoSort2, labelside = input$labelSide2, labelangle = input$labelAngle2,
-                                                     constrainrange = input$constrainRange2, labeltarget = labelTarget2,  colbarreverse = colbarReverse2)
+                                                     constrainrange = input$constrainRange2, labeltarget = labelTarget2,  colbarreverse = colbarReverse2, title = title2)
         else if(input$FunctionChoice2 == "Heatmap")
-          if(input$plotFunction2 == "mean")
+          if(length(input$plotFeaturesHM2) != 2) {
+            shinyalert(title = "please select two parameters!", text = userhelp[["Not enough Parameter"]], closeOnClickOutside = TRUE, animation = FALSE)
+            finalPlots$plot2 <- NULL }
+          else if(input$plotFunction2 == "mean")
             finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = mean, gridsize = input$gridsizeHM2, scatterplot = plotPoints2, rug = rugHM2)
-        else
-          finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = sd, gridsize = input$gridsizeHM2, scatterplot = plotPoints2, rug = rugHM2)
+          else
+            finalPlots$plot2 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM2, fun = sd, gridsize = input$gridsizeHM2, scatterplot = plotPoints2, rug = rugHM2)
         else if(input$FunctionChoice2 == "Importance Plot")
 
           finalPlots$plot2 <- plotImportance(task = Task_properties$task, learner = learner$model, loss = input$lossFunction2)
@@ -771,6 +807,7 @@ VisualizationServer <- function(id, data) {
         autoSort3 <- ifelse(input$autoSort3 == 1, TRUE, FALSE)
         colbarReverse3 <- ifelse(input$colbarReverse3 == 1, TRUE, FALSE)
         labelTarget3 <- ifelse(input$labelTarget3 == 1, TRUE, FALSE)
+        title3 <- ifelse(abs(input$labelAngle3) > 10, FALSE, TRUE)
 
         #Heatmap
         plotPoints3 <- ifelse(input$plotPoints3 == 1, TRUE, FALSE)
@@ -785,12 +822,15 @@ VisualizationServer <- function(id, data) {
 
         else if(input$FunctionChoice3 == "PCP")
           finalPlots$plot3 <- plotParallelCoordinate(task = Task_properties$task, features = input$plotFeaturesPCP3, autosort = autoSort3, labelside = input$labelSide3, labelangle = input$labelAngle3,
-                                                     constrainrange = input$constrainRange3, labeltarget = labelTarget3,  colbarreverse = colbarReverse3)
+                                                     constrainrange = input$constrainRange3, labeltarget = labelTarget3,  colbarreverse = colbarReverse3, title = title3)
         else if(input$FunctionChoice3 == "Heatmap")
-          if(input$plotFunction3 == "mean")
-            finalPlots$plot3 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM3, fun = mean, gridsize = input$gridsizeHM3, scatterplot = plotPoints3, rug = rugHM3)
-        else
-          finalPlots$plot3 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM3, fun = sd, gridsize = input$gridsizeHM3, scatterplot = plotPoints3, rug = rugHM3)
+          if(length(input$plotFeaturesHM3) != 2) {
+            shinyalert(title = "please select two parameters!", text = userhelp[["Not enough Parameter"]], closeOnClickOutside = TRUE, animation = FALSE)
+            finalPlots$plot3 <- NULL }
+          else if(input$plotFunction3 == "mean")
+              finalPlots$plot3 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM3, fun = mean, gridsize = input$gridsizeHM3, scatterplot = plotPoints3, rug = rugHM3)
+          else
+            finalPlots$plot3 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM3, fun = sd, gridsize = input$gridsizeHM3, scatterplot = plotPoints3, rug = rugHM3)
         else if(input$FunctionChoice3 == "Importance Plot")
           finalPlots$plot3 <- plotImportance(task = Task_properties$task, learner = learner$model, loss = input$lossFunction3)
         }
@@ -814,6 +854,7 @@ VisualizationServer <- function(id, data) {
         autoSort4 <- ifelse(input$autoSort4 == 1, TRUE, FALSE)
         colbarReverse4 <- ifelse(input$colbarReverse4 == 1, TRUE, FALSE)
         labelTarget4 <- ifelse(input$labelTarget4 == 1, TRUE, FALSE)
+        title4 <- ifelse(abs(input$labelAngle4) > 10, FALSE, TRUE)
 
         #Heatmap
         plotPoints4 <- ifelse(input$plotPoints4 == 1, TRUE, FALSE)
@@ -824,12 +865,15 @@ VisualizationServer <- function(id, data) {
 
         else if(input$FunctionChoice4 == "PCP")
           finalPlots$plot4 <- plotParallelCoordinate(task = Task_properties$task, features = input$plotFeaturesPCP4, autosort = autoSort4, labelside = input$labelSide4, labelangle = input$labelAngle4,
-                                                     constrainrange = input$constrainRange4, labeltarget = labelTarget4,  colbarreverse = colbarReverse4)
+                                                     constrainrange = input$constrainRange4, labeltarget = labelTarget4,  colbarreverse = colbarReverse4, title = title4)
         else if(input$FunctionChoice4 == "Heatmap")
-          if(input$plotFunction4 == "mean")
-            finalPlots$plot4 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM4, fun = mean, gridsize = input$gridsizeHM4, scatterplot = plotPoints4, rug = rugHM4)
-        else
-          finalPlots$plot4 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM4, fun = sd, gridsize = input$gridsizeHM4, scatterplot = plotPoints4, rug = rugHM4)
+          if(length(input$plotFeaturesHM4) != 2) {
+            shinyalert(title = "please select two parameters!", text = userhelp[["Not enough Parameter"]], closeOnClickOutside = TRUE, animation = FALSE)
+            finalPlots$plot4 <- NULL }
+          else if(input$plotFunction4 == "mean")
+              finalPlots$plot4 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM4, fun = mean, gridsize = input$gridsizeHM4, scatterplot = plotPoints4, rug = rugHM4)
+          else
+            finalPlots$plot4 <- plotHeatmap(task = Task_properties$task, features = input$plotFeaturesHM4, fun = sd, gridsize = input$gridsizeHM4, scatterplot = plotPoints4, rug = rugHM4)
 
         else if(input$FunctionChoice4 == "Importance Plot")
           finalPlots$plot4 <- plotImportance(task = Task_properties$task, learner = learner$model, loss = input$lossFunction4)

@@ -9,6 +9,7 @@ library(mlr3learners)
 library(VisHyp)
 library(stringr)
 library(DT)
+library(data.table)
 library(ggplot2)
 library(plotly)
 
@@ -26,7 +27,8 @@ userhelp <- list(
 "Duplicated Columns" = "The data set contains duplicated column names. For this reason the duplicated variable names have been renamed ",
 "Minimum Column" = "You need at least 2 remaning columns to create a task.",
 "No Plot Selected" = "Please choose at least one plot before pressing the recalculate button.",
-"More Column Selected" = "More than one column has been selected for renaming. Please select only one variable!"
+"More Column Selected" = "More than one column has been selected for renaming. Please select only one variable!",
+"Not enough Parameter" = "Please choose exactly two parameters for the display of a heatmap"
 )
 
 #APP UI

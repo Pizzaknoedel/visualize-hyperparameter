@@ -39,11 +39,11 @@ output$dataManipulation <- renderUI({
     fluidRow(column(2, h5("Select a Column: ")),
              column(4, selectizeInput(inputId = ns("selectColumn"), label = NULL,
                                       choices = names(data$manipulateData), multiple = TRUE)),
-             column(2, actionButton(inputId = ns("Drop_column"), label = "Drop column")),
+             column(2, actionButton(inputId = ns("Drop_column"), label = "Drop Column")),
              column(2, actionButton(inputId = ns("resetData"), label = "Reset Data"), style = "float: right;")),
     fluidRow(column(2, h5("Rename Column: ")),
              column(4, h5(textInput(ns("new_column_name"), placeholder = "New column name...", label = NULL, value = NULL))),
-             column(2, h5(actionButton(ns("column_rename"), label = "Rename column")))),
+             column(2, h5(actionButton(ns("column_rename"), label = "Rename Column")))),
     fluidRow(column(2, h5("Filter Data: ")))
   )
 })
@@ -116,6 +116,7 @@ observe({
 
   data$manipulateData <- data$originalData
   data$subsetData <- data$originalData
+
 })
 
 
@@ -207,6 +208,15 @@ if (any(duplicated(names(data$subsetData)))){
   colnames(data$subsetData) <- newNames
   colnames(data$manipulateData) <- newNames
 }
+  data$subsetData <- as.data.frame(data$subsetData)
+  n <- length(data$subsetData)
+  for (i in 1:n) {
+    if(is.logical(data$subsetData[,i]))
+      data$subsetData[,i] <- as.factor(data$subsetData[,i])
+    if(is.character(data$subsetData[,i]))
+      data$subsetData[,i] <- as.factor(data$subsetData[,i])
+  }
+
   data$taskRdy <- TRUE
 })
 

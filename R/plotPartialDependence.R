@@ -114,6 +114,8 @@ plotPartialDependence <- function(task, features = NULL, learner = NULL, gridsiz
        pdp <- pdp + xlab(features[1])
 
     }
+    else if(is.numeric(featureVector1) & is.factor(featureVector2) | is.factor(featureVector1) & is.numeric(featureVector2))
+      return(pdp)
   }
   pdp <- ggplotly(pdp)
   pdp

@@ -179,7 +179,8 @@ plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", lab
   # create a title
   if (title == TRUE)
   pcp <- pcp %>%
-    layout(title = list(text = "Parallel Coordinate Plot", x = 0, y = 3, xref = "paper", yref ="paper"))
+    layout(title = list(text = "Parallel Coordinate Plot", x = 0, y = 3, xref = "paper", yref ="paper",
+                        font = list( color = "black") ))
 
   pcp
 

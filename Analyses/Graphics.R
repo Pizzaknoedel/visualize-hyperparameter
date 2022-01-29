@@ -8,8 +8,52 @@ library(mlr3pipelines)
 library(iml)
 toBibtex(citation("iml"))
 
+smashy_super <- smashy_super
+smashy_super <- as.data.frame(smashy_super)
+n <- length(smashy_super)
+for (i in 1:n) {
+  if(is.logical(smashy_super[,i]))
+    smashy_super[,i] <- as.factor(smashy_super[,i])
+  if(is.character(smashy_super[,i]))
+    smashy_super[,i] <- as.factor(smashy_super[,i])
+}
 # Produced graphics as an example for the bachelor thesis
+task = TaskRegr$new(id = "smashy_super", backend = smashy_super, target = "yval")
+plotPartialDependence(task, features = c("survival_fraction", "random_interleave_random"), rug = FALSE)
+plotPartialDependence(task, features = c("filter_algorithm", "budget_log_step"), rug = FALSE)
+#plotPartialDependence(task, features = c("filter_factor_last", "budget_log_step"), rug = FALSE)
+plotPartialDependence(task, features = c("filter_factor_last", "filter_with_max_budget"), rug = FALSE)
+# make the task more robust
+po = po("imputehist") %>>%  po("imputeoor") %>>% po("fixfactors", droplevels = FALSE) %>>%
+  po("removeconstants") %>>% po("imputesample")#, affect_columns = selector_type("logical"))
+task = po$train(task)[[1]]
+learner = lrn("regr.ranger", num.trees = 100)
+# get the data out of the task
+df <- task$data()
+df <- as.data.frame(df)
+# Train the learner on a set of observations of the provided task i.e. fit the selected model
+targetName <- task$target_names
+targetVector <-  df[[targetName]]
+index <- which(names(df) != targetName)
+df <- df[index]
+n <- length(df)
+for (i in 1:n) {
+  if(is.logical(df[,i]))
+    df[,i] <- as.factor(df[,i])
+  if(is.character(df[,i]))
+    df[,i] <- as.factor(df[,i])
+}
 
+# Train the learner on a set of observations of the provided task i.e. fit the selected model
+learner <- learner
+learner$train(task)
+# for the iml plot the leaner and data need to be wrapped in a Predictor object
+model <- iml::Predictor$new(learner, data = df, y = targetVector)
+plot(iml::FeatureEffect$new(model, feature = features, method = "pdp", grid.size = 10))
+featureVector1 <- df[[features[1]]]
+featureVector2 <- df[[features[2]]]
+is.numeric(featureVector1) & is.factor(featureVector2) | is.factor(featureVector1) & is.numeric(featureVector2)
+launchVisHyp()
 
 data <- read_csv("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Data/iaml_rpart.csv")
 str(data)
