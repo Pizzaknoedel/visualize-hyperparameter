@@ -10,7 +10,8 @@ plotHeatmap(
   fun = mean,
   gridsize = 20,
   scatterplot = FALSE,
-  rug = TRUE
+  rug = TRUE,
+  title = TRUE
 )
 }
 \arguments{
@@ -26,11 +27,14 @@ A summary function used in the rectangles of the grid. The default summary funct
 \item{gridsize}{(\code{numeric(1)}) \cr
 The number of rectangles per axis. Default value is 20.}
 
-\item{scatterplot}{(\code{logical(1)}) \cr
+\item{scatterplot}{(\code{logical}) \cr
 If TRUE, then a scatterplot will be plotted. Default is FALSE.}
 
-\item{rug}{(\code{logical(1)}) \cr
+\item{rug}{(\code{logical}) \cr
 If TRUE, then a rug will be plotted. Default is TRUE.}
+
+\item{title}{(\code{logical}) \cr
+If TRUE, then a title will be plotted. Default is TRUE.}
 }
 \value{
 A \link{plotly} object.

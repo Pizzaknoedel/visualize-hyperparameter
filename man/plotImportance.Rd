@@ -4,7 +4,7 @@
 \alias{plotImportance}
 \title{Importance Plot}
 \usage{
-plotImportance(task, learner = NULL, loss = "mae")
+plotImportance(task, learner = NULL, loss = "mae", title = TRUE)
 }
 \arguments{
 \item{task}{\link[mlr3:Task]{mlr3::Task} object \cr
@@ -17,6 +17,9 @@ If NUll, then a Random Forest for regression or classification will be used. Def
 \item{loss}{(\code{character(1)} \cr
 The loss function to be used. It can be chosen between "ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
 "mdae", "msle", "percent_bias", "rae", "rmse", "rmsle", "rse", "rrse", "smape". Default is "mae".}
+
+\item{title}{(\code{logical}) \cr
+If TRUE, then a title will be plotted. Default is TRUE.}
 }
 \value{
 A \link{plotly} object.

@@ -10,7 +10,8 @@ plotPartialDependence(
   learner = NULL,
   gridsize = 20,
   rug = TRUE,
-  plotICE = TRUE
+  plotICE = TRUE,
+  title = TRUE
 )
 }
 \arguments{
@@ -28,12 +29,15 @@ If NUll, then a Random Forest for regression or classification will be used. Def
 \item{gridsize}{(\code{numeric(1)}) \cr
 The number of rectangles/ sections per axis. Default is 20.}
 
-\item{rug}{(\code{logical(1)}) \cr
+\item{rug}{(\code{logical}) \cr
 If TRUE, then a rug will be plotted. Default is TRUE.}
 
-\item{plotICE}{(\code{logical(1)}) \cr
+\item{plotICE}{(\code{logical}) \cr
 If TRUE, then the individual conditional expectations (ICE) will be also plotted. Only available for one feature.
 Default is TRUE.}
+
+\item{title}{(\code{logical}) \cr
+If TRUE, then a title will be plotted. Default is TRUE.}
 }
 \value{
 A \link{plotly} object.

@@ -14,5 +14,7 @@ smashy_super
 }
 \description{
 A dataset containing the \code{yval} performance meassure and 11 hyperparameter.
+The dataset is from Moosbauer, Julia, et al. "Automated Benchmark-Driven Design and Explanation of Hyperparameter Optimizers."
+arXiv preprint arXiv:2111.14756 (2021).
 }
 \keyword{datasets}

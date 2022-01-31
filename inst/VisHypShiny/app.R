@@ -28,7 +28,7 @@ userhelp <- list(
 "Minimum Column" = "You need at least 2 remaning columns to create a task.",
 "No Plot Selected" = "Please choose at least one plot before pressing the recalculate button.",
 "More Column Selected" = "More than one column has been selected for renaming. Please select only one variable!",
-"Not enough Parameter" = "Please choose exactly two parameters for the display of a heatmap"
+"Not enough Parameter" = "Please choose exactly two parameters for the display of a heatmap."
 )
 
 #APP UI

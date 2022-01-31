@@ -26,6 +26,8 @@
 #'   Default is "Max".
 #' @param title (`logical`) \cr
 #'   If TRUE, then a title will be plotted. Default is FALSE
+#' @param labelangle (`numeric(1)`) \cr
+#'   The height for the title Default is 0.95.
 #'
 #' @return A [plotly] object.
 #'
@@ -41,7 +43,7 @@
 
 
 plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", labelangle = 0, colbarrange = NULL, constrainrange = NULL,
-                                   labeltarget = TRUE,  colbarreverse = FALSE, autosort = TRUE, numericNA = "Max", title = FALSE) {
+                                   labeltarget = TRUE,  colbarreverse = FALSE, autosort = TRUE, numericNA = "Max", title = FALSE, titleheight = 0.95) {
 
   # check input
   assert_task(task)
@@ -179,8 +181,8 @@ plotParallelCoordinate <- function(task, features = NULL, labelside = "Top", lab
   # create a title
   if (title == TRUE)
   pcp <- pcp %>%
-    layout(title = list(text = "Parallel Coordinate Plot", x = 0, y = 3, xref = "paper", yref ="paper",
-                        font = list( color = "black") ))
+    layout(title = list(text = "Parallel Coordinate Plot", x = 0, y = titleheight, xref = "paper", yref = "container",
+                        font = list( color = "black")))
 
   pcp
 

@@ -13,7 +13,9 @@ plotParallelCoordinate(
   constrainrange = NULL,
   labeltarget = TRUE,
   colbarreverse = FALSE,
-  autosort = TRUE
+  autosort = TRUE,
+  numericNA = "Max",
+  title = FALSE
 )
 }
 \arguments{
@@ -37,14 +39,21 @@ If NULL, then the color bar between minimum and maximum of the target variable i
 A vector with two numeric values between 0 and 1. The vector restrict each column to the values of a range
 for which they are within the quantile of the target variable. If NULL, then no restriction is plotted. Default is NULL.}
 
-\item{labeltarget}{(\code{logical(1)}) \cr
+\item{labeltarget}{(\code{logical}) \cr
 If TRUE, the target will be labeled. Default is TRUE.}
 
-\item{colbarreverse}{(\code{logical(1)}) \cr
+\item{colbarreverse}{(\code{logical}) \cr
 If TRUE, The colorbar will be reversed. Default is FALSE.}
 
-\item{autosort}{(\code{logical(1)}) \cr
+\item{autosort}{(\code{logical}) \cr
 If True, The columns will be ordered. Default is TRUE.}
+
+\item{numericNA}{(\code{character(1)} \cr
+If "Max", the NA values of the column are displayed as maximum value. If "Min", then the NA values are displayed as minimum value.
+Default is "Max".}
+
+\item{title}{(\code{logical}) \cr
+If TRUE, then a title will be plotted. Default is FALSE}
 }
 \value{
 A \link{plotly} object.
