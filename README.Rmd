@@ -4,14 +4,14 @@ output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r, include = FALSE, warning = FALSE, messages = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
+ ```{r, include = FALSE, warning = FALSE, messages = FALSE}
+ knitr::opts_chunk$set(
+ collapse = TRUE,
+ comment = "#>",
+ fig.path = "man/figures/",
+ out.width = "100%"
+ )
+ ```
 
 # VisHyp
 
@@ -28,6 +28,7 @@ You can install the development version of VisHyp from [GitHub](https://github.c
 ```r
 # install.packages("devtools")
 devtools::install_github("Pizzaknoedel/visualize-hyperparameter")
+library(VisHyp)
 ```
 ## Shiny 
 
@@ -42,37 +43,43 @@ launchVisHyp()
 This is a basic example which shows you how to plot the four implemented graphics. Each plot needs a task created with the [mlr3](https://github.com/mlr-org/mlr3) package.
 
 ```r 
-## basic example code
-library(VisHyp)
+## Create a Task
 library(mlr3)
 task = TaskRegr$new(id = "task_glmnet", backend = smashy_super, target = "yval")
+```
 
-## PCP: In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values. 
+In the Parallel Coordinate Plot, each line represents a configuration and the color of the line represents the corresponding performance value. The Parallel Coordinate Plot helps to find configuration spaces that contain good performance values.
+```r 
+## Display a PCP 
 plotParallelCoordinate(task, labelangle = 15)
+```
+![](man/figures/PCP.png)
 
-## Heatmap: The heat map contrasts two parameters and allows quick examination of the effects of each configuration combination. The importance plot uses a surrogate learner to represent the importance of each parameter.
+Heatmap: The heat map contrasts two parameters and allows quick examination of the effects of each configuration combination. The importance plot uses a surrogate learner to represent the importance of each parameter.
 plotHeatmap(task, gridsize = 10, features = c())
+```r 
+## Display a Heatmap 
+plotHeatmap(task, c("random_interleave_fraction", features = "sample"))
+```
+![](man/figures/Heatmap.png)
 
-## Importance Plot: The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model.
+Importance Plot: The important parameters should be set as optimal as possible to get a good performance. To last still the partial Dependence Plot was implemented, with which it is possible to examine the individual definition areas of the parameters with the help of a Surrogats model.
+
+```r 
+## Display an Importance Plot 
 plotImportance(task)
+```
+![](man/figures/Importance.png)
 
-## PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
+PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
 plotPartialDependence(task) 
+```r 
+## Display a PDP 
+plotPartialDependence(task)
 ```
+![](man/figures/PDP.PNG)
 
 
-```{r}
-#![]("https://github.com/Pizzaknoedel/visualize-hyperparameter/tree/main/man/figures/lcbench_Best_PCP.png")
-
-```
 
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this. You could also use GitHub Actions to re-render `README.Rmd` every time you push. An example workflow can be found here: <https://github.com/r-lib/actions/tree/v1/examples>.
 
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.

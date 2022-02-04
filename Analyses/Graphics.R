@@ -248,38 +248,20 @@ save_image(PDP3_survival_fraction_super, file = "D:/Simon/Desktop/Studium/6. Sem
 
 
 #Git
-n <- length(smashy_super)
-for (i in 1:n) {
-  if(is.logical(smashy_super[,i]))
-    smashy_super[,i] <- as.factor(smashy_super[,i])
-  if(is.character(smashy_super[,i]))
-    smashy_super[,i] <- as.factor(smashy_super[,i])
-}
-
+library(mlr3)
 task = TaskRegr$new(id = "task_glmnet", backend = smashy_super, target = "yval")
-learner = lrn("regr.ranger", num.trees = 100)
-learner$train(task)
-model <- iml::Predictor$new(learner, data = smashy_super, y = "yval")
-p1 <- iml::FeatureEffect$new(model, feature = "surrogate_learner", method = "pdp+ice", grid.size = 10)
-p1 <- plot(p1, rug = FALSE) +
-  ggtitle("Partial Dependence Plot")
-p1
+PCP <- plotParallelCoordinate(task, labelangle = 15)
+save_image(PCP, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/package_VisHyp/man/figures/PCP.png",
+           width = 700, height = 500, scale = 2 )
+Heatmap <- plotHeatmap(task, c("random_interleave_fraction", features = "sample"))
+save_image(Heatmap, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/package_VisHyp/man/figures/Heatmap.png",
+           width = 700, height = 500, scale = 2 )
+Importance <- plotImportance(task)
+save_image(Importance, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/package_VisHyp/man/figures/Importance.png",
+           width = 700, height = 500, scale = 2 )
+PDP <- plotPartialDependence(task)
+save_image(PDP, file = "D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/package_VisHyp/man/figures/PDP.png",
+           width = 700, height = 500, scale = 2 )
 
-p2 <- iml::FeatureEffect$new(model, feature = "random_interleave_fraction", method = "pdp+ice", grid.size = 10)
-p2 <- plot(p2, rug = TRUE) +
-  ggtitle("Partial Dependence Plot")
-p2
 
-legend <- paste0("yval", " (", as.character(substitute(mean)), ")")
-p3 <- ggplot(smashy_super, aes_string(x = "sample", y = "surrogate_learner", z = "yval")) +
-  geom_tile(stat = "summary_2d", fun = mean, bins = 10) +
-  labs(title = "Heatmap", fill = legend)
-p3
-
-p4 <- iml::FeatureImp$new(model, loss = "mae")
-p4 <- plot(p4) +
-  scale_x_continuous(sprintf("Parameter Importance (loss: %s)", "mae")) +
-  labs(title = "Importance Plot")
-p4
-plots <- (p1 | p2 ) / (p3 | p4 )
-plots
+#You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this..
