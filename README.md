@@ -11,9 +11,9 @@
 The goal of the “VisHyp” package is to visualize hyperparameter
 performance dependencies in order to gain insight into which
 hyperparameter configurations deliver the best performance. For this
-purpose, the following four plots were created: The Partical Coordinate
-Plot (PCP), the Partial Dependence Plot (PDP), the Importance Plot and
-the Heatmap.
+purpose, the following four plots were implemented: The Partical
+Coordinate Plot (PCP), the Partial Dependence Plot (PDP), the Importance
+Plot and the Heatmap.
 
 ## Installation
 
@@ -56,7 +56,7 @@ plotHeatmap(task, gridsize = 10, features = c())
 plotImportance(task)
 
 ## PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
-plotPartialDependence(task)
+plotPartialDependence(task) 
 ```
 
 ``` r

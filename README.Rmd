@@ -57,7 +57,7 @@ plotHeatmap(task, gridsize = 10, features = c())
 plotImportance(task)
 
 ## PDP: The Partial Dependence Plot uses different graphics. So it depends on whether the user wants to look at one or more features. When viewing a numerical parameter, line plots are used. 
-plotPartialDependence(task)
+plotPartialDependence(task) 
 ```
 
 

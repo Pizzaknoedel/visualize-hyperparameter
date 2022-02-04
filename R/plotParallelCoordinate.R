@@ -26,7 +26,7 @@
 #'   Default is "Max".
 #' @param title (`logical`) \cr
 #'   If TRUE, then a title will be plotted. Default is FALSE
-#' @param labelangle (`numeric(1)`) \cr
+#' @param titleheight (`numeric(1)`) \cr
 #'   The height for the title Default is 0.95.
 #'
 #' @return A [plotly] object.

@@ -8,6 +8,7 @@
 #' \item{\code{logloss}}{performance meassure}
 #' \item{\code{alpha}}{hyperparameter}
 #' \item{\code{s}}{hyperparameter}}
+
 "glmnet_ela"
 
 #' logloss Performance for two hyperparameter.

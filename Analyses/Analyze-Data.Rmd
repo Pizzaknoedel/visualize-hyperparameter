@@ -1,5 +1,5 @@
 ---
-title: "Analyze data"
+title: "Analyze Data"
 author: "Simon Pradel"
 date: "08 02 2022"
 output: 
@@ -528,7 +528,7 @@ Let us observe the other impotant parameter from PCP and Importance Plot for the
 ### {.tabset .unlisted .unnumbered}
 #### bohblrn: PDP budget_log_step 
 ```{r PDP5 surrogate_learner bohblrn Best}
-plotPartialDependence(bohblrnTaskBest, "budget_log_step", gridsize = 30)
+plotPartialDependence(bohblrnTaskBest, "budget_log_step", gridsize = 30, plotICE = FALSE)
 ```
 
 #### bohblrn: PDP filter_with_max_budget 
@@ -538,7 +538,7 @@ plotPartialDependence(bohblrnTaskBest, "filter_with_max_budget")
 
 #### bohblrn: PDP filter_factor_last 
 ```{r PDP7 surrogate_learner bohblrn Best}
-plotPartialDependence(bohblrnTaskBest, "filter_factor_last")
+plotPartialDependence(bohblrnTaskBest, "filter_factor_last", plotICE = FALSE)
 ```
 
 #### bohblrn: PDP filter_algorithm 
@@ -596,17 +596,17 @@ The interesting parameter according to PCP and Importance Plots should be examin
 
 #### knn1: PDP filter_factor_first
 ```{r PDP1 surrogate_learner knn1 Best}
-plotPartialDependence(knn1BestTask, "filter_factor_first" )
+plotPartialDependence(knn1BestTask, "filter_factor_first", plotICE = FALSE )
 ```
 
 #### knn1: PDP survival_fraction 
 ```{r PDP2 surrogate_learner knn1 Best}
-plotPartialDependence(knn1BestTask, "survival_fraction")
+plotPartialDependence(knn1BestTask, "survival_fraction", plotICE = FALSE)
 ```
 
 #### knn1: PDP filter_factor_last 
 ```{r PDP3 surrogate_learner knn1 Best}
-plotPartialDependence(knn1BestTask, "filter_factor_last")
+plotPartialDependence(knn1BestTask, "filter_factor_last", plotICE = FALSE)
 ```
 
 #### knn1: PDP filter_with_max_budget
@@ -616,17 +616,17 @@ plotPartialDependence(knn1BestTask, "filter_with_max_budget")
 
 #### knn1: PDP survival_fraction 
 ```{r PDP5 surrogate_learner knn1 Best}
-plotPartialDependence(knn1BestTask, "budget_log_step")
+plotPartialDependence(knn1BestTask, "budget_log_step", plotICE = FALSE)
 ```
 
 #### knn1: PDP filter_with_max_budget
 ```{r PDP6 surrogate_learner knn1 Best}
-plotPartialDependence(knn1BestTask, "filter_select_per_tournament")
+plotPartialDependence(knn1BestTask, "filter_select_per_tournament", plotICE = FALSE)
 ```
 
 #### knn1: PDP survival_fraction 
 ```{r PDP7 surrogate_learner knn1 Best}
-plotPartialDependence(knn1BestTask, "random_interleave_fraction")
+plotPartialDependence(knn1BestTask, "random_interleave_fraction", plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -665,22 +665,22 @@ Importance Plot: The most important parameters are **filter_factor_first**, **fi
  
 #### knn7: PDP filter_factor_first
 ```{r PDP1 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "filter_factor_first" )
+plotPartialDependence(knn7BestTaskBest, "filter_factor_first", plotICE = FALSE )
 ```
 
 #### knn7: PDP filter_factor_last 
 ```{r PDP2 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "filter_factor_last")
+plotPartialDependence(knn7BestTaskBest, "filter_factor_last", plotICE = FALSE)
 ```
 
 #### knn7: PDP budget_log_step 
 ```{r PDP4 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "budget_log_step")
+plotPartialDependence(knn7BestTaskBest, "budget_log_step", plotICE = FALSE)
 ```
 
 #### knn7: PDP filter_algorithm 
 ```{r PDP5 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "filter_algorithm")
+plotPartialDependence(knn7BestTaskBest, "filter_algorithm", plotICE = FALSE)
 ```
 
 #### knn7: PDP random_interleave_random 
@@ -690,17 +690,17 @@ plotPartialDependence(knn7BestTaskBest, "random_interleave_random")
 
 #### knn7: PDP survival_fraction 
 ```{r PDP7 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "survival_fraction")
+plotPartialDependence(knn7BestTaskBest, "survival_fraction", plotICE = FALSE)
 ```
 
 #### knn7: PDP random_interleave_fraction 
 ```{r PDP8 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "random_interleave_fraction")
+plotPartialDependence(knn7BestTaskBest, "random_interleave_fraction", plotICE = FALSE)
 ```
 
 #### knn7: PDP filter_select_per_tournament 
 ```{r PDP9 surrogate_learner knn7 Best}
-plotPartialDependence(knn7BestTaskBest, "filter_select_per_tournament")
+plotPartialDependence(knn7BestTaskBest, "filter_select_per_tournament", plotICE = FALSE)
 ```
 
 #### knn7: PDP filter_with_max_budget 
@@ -744,17 +744,17 @@ Importance Plot: The most important parameters are **filter_factor_first**, **fi
 
 #### ranger: PDP survival_fraction
 ```{r PDP2 surrogate_learner Ranger Best}
-plotPartialDependence(rangerBestTaskBest, "filter_factor_first")
+plotPartialDependence(rangerBestTaskBest, "filter_factor_first", plotICE = FALSE)
 ```
 
 #### ranger: PDP budget_log_step
 ```{r PDP3 surrogate_learner Ranger Best}
-plotPartialDependence(rangerBestTaskBest, "budget_log_step")
+plotPartialDependence(rangerBestTaskBest, "budget_log_step", plotICE = FALSE)
 ```
 
 #### ranger: PDP filter_with_max_budget
 ```{r PDP4 surrogate_learner Ranger Best}
-plotPartialDependence(rangerBestTaskBest, "filter_with_max_budget")
+plotPartialDependence(rangerBestTaskBest, "filter_with_max_budget", plotICE = FALSE)
 ```
 
 A high **budget_log_step** and a low **filter_factor_first** seems produce best performance. For **budget_log_step** a value over -0.5 seems to be good, for **filter_factor_first** a value under 2.5 performs best. It needs to be noticed that only around 45 observations are left and so the intepretation is not that clear. The parameter **filter_with_max_budget** should set to "TRUE".
@@ -771,7 +771,7 @@ plotPartialDependence(bohbTask,"budget_log_step", plotICE = FALSE)
 #### subdivided dataset
 
 ```{r PDP budget_log_step Best}
-plotPartialDependence(bohbBestTask, features = c("budget_log_step"))
+plotPartialDependence(bohbBestTask, features = c("budget_log_step"), plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -800,7 +800,7 @@ For the **random_interleave_fraction** and the "bohb" **sample** a good choice i
 #### top 20% {.unlisted .unnumbered}
 
 ```{r PDP random_interleave_fraction Best}
-plotPartialDependence(bohbBestTask, features = c("random_interleave_fraction"))
+plotPartialDependence(bohbBestTask, features = c("random_interleave_fraction"), plotICE = FALSE)
 ```
 
 In the upper case, there is no bad range at the edges. 
@@ -817,7 +817,7 @@ plotPartialDependence(bohbTask, "filter_factor_last", plotICE = FALSE)
 
 #### subdivided  Dataset
 ```{r PDP filter_factor_last Best}
-plotPartialDependence(bohbBestTask, features = c("filter_factor_last"))
+plotPartialDependence(bohbBestTask, features = c("filter_factor_last"), plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -881,7 +881,7 @@ The parameter **filter_factor_first** was a very high ranked parameter in the pa
 
 #### PDP filter_factor_first
 ```{r PDP filter_factor_first}
-plotPartialDependence(bohbBestTask, features = c("filter_factor_first"), plotICE = TRUE, gridsize = 20)
+plotPartialDependence(bohbBestTask, features = c("filter_factor_first"), gridsize = 20, plotICE = FALSE)
 ```
 
 #### PDP: Combination with filter_factor_last
@@ -1167,12 +1167,12 @@ superRandomBestTask <- TaskRegr$new(id = "superRandomBestTask", backend = superB
 ```
 #### bohb Best
 ```{r PDP3 survival_fraction superSmashy}
-plotPartialDependence(superBohbBestTask, features = c("survival_fraction"), rug = TRUE, plotICE = TRUE)
+plotPartialDependence(superBohbBestTask, features = c("survival_fraction"), rug = TRUE, plotICE = FALSE)
 ```
 
 #### random Best
 ```{r PDP4 survival_fraction superSmashy}
-plotPartialDependence(superRandomBestTask, features = c("survival_fraction"), rug = TRUE, plotICE = TRUE)
+plotPartialDependence(superRandomBestTask, features = c("survival_fraction"), rug = TRUE, plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -1240,7 +1240,7 @@ Most important Parameter for nearly all **surrogate_learner** is the **sample** 
 
 #### knn1: sample 
 ```{r PDP3 surrogate_learner superSmashy}
-plotPartialDependence(superKnn1Task, "sample", rug = FALSE)
+plotPartialDependence(superKnn1Task, "sample", rug = FALSE, )
 ```
 
 #### knn7: sample 
@@ -1293,22 +1293,22 @@ Another important parameter for all **surrogate_learner** is the **survival_frac
 
 #### knn1: survival_fraction 
 ```{r PDP11 surrogate_learner superSmashy}
-plotPartialDependence(superKnn1Task, "survival_fraction")
+plotPartialDependence(superKnn1Task, "survival_fraction", plotICE = FALSE)
 ```
 
 #### knn7: survival_fraction 
 ```{r PDP12 surrogate_learner superSmashy}
-plotPartialDependence(superKnn7Task, "survival_fraction")
+plotPartialDependence(superKnn7Task, "survival_fraction", plotICE = FALSE)
 ```
 
 #### bohblrn: survival_fraction 
 ```{r PDP13 surrogate_learner superSmashy}
-plotPartialDependence(superBohblrnTask, "survival_fraction")
+plotPartialDependence(superBohblrnTask, "survival_fraction", plotICE = FALSE)
 ```
 
 #### ranger: survival_fraction 
 ```{r PDP14 surrogate_learner superSmashy}
-plotPartialDependence(superRangerTask, "survival_fraction")
+plotPartialDependence(superRangerTask, "survival_fraction", plotICE = FALSE)
 ```
 
 ### {.tabset .unlisted .unnumbered}
@@ -1319,22 +1319,22 @@ The last parameter we want to check if **filter_with_max_budget**. It was only i
 
 #### knn1: filter_with_max_budget 
 ```{r PDP15 surrogate_learner superSmashy}
-plotPartialDependence(superKnn1Task, "filter_with_max_budget")
+plotPartialDependence(superKnn1Task, "filter_with_max_budget", plotICE = FALSE)
 ```
 
 #### knn7: filter_with_max_budget 
 ```{r PDP16 surrogate_learner superSmashy}
-plotPartialDependence(superKnn7Task, "filter_with_max_budget")
+plotPartialDependence(superKnn7Task, "filter_with_max_budget", plotICE = FALSE)
 ```
 
 #### bohblrn: filter_with_max_budget 
 ```{r PDP17 surrogate_learner superSmashy}
-plotPartialDependence(superBohblrnTask, "filter_with_max_budget")
+plotPartialDependence(superBohblrnTask, "filter_with_max_budget", plotICE = FALSE)
 ```
 
 #### ranger: filter_with_max_budget 
 ```{r PDP18 surrogate_learner superSmashy}
-plotPartialDependence(superRangerTask, "filter_with_max_budget")
+plotPartialDependence(superRangerTask, "filter_with_max_budget", plotICE = FALSE)
 ```
 
 When we compared the importance of **surrogate_learner**, we found that the **filter_with_max_budget** parameter was only important for "knn1". Here we can see that for "knn1" the parameter **filter_with_max_budget** should be set to "TRUE". For other parameters it is indeed not important if the parameter is set to "TRUE" or "FALSE".
@@ -1386,12 +1386,12 @@ Accordint Importance Plot The paramter **filter_factor_first** and **filter_fact
 
 #### knn1: PDP filter_factor_first
 ```{r PDP19 surrogate_learner superSmashy}
-plotPartialDependence(superKnn1BestTask, "filter_factor_first" )
+plotPartialDependence(superKnn1BestTask, "filter_factor_first", plotICE = FALSE)
 ```
 
 #### knn1: Importance filter_factor_last 
 ```{r PDP20 surrogate_learner superSmashy}
-plotPartialDependence(superKnn1BestTask, "filter_factor_last")
+plotPartialDependence(superKnn1BestTask, "filter_factor_last", plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -1422,12 +1422,12 @@ For the "random" Subset higher values produces better outcomes. For the superBoh
 
 #### bohb Best
 ```{r PDP3 budget_log_step superSmashy}
-plotPartialDependence(superBohbBestTask, features = c("budget_log_step"), rug = TRUE, plotICE = TRUE)
+plotPartialDependence(superBohbBestTask, features = c("budget_log_step"), rug = TRUE, plotICE = FALSE)
 ```
 
 #### random Best
 ```{r PDP4 budget_log_step superSmashy}
-plotPartialDependence(superRandomBestTask, features = c("budget_log_step"), rug = TRUE, plotICE = TRUE)
+plotPartialDependence(superRandomBestTask, features = c("budget_log_step"), rug = TRUE, plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -1498,12 +1498,12 @@ For the "random" **samples** a high value between 0.5 and 0.75 seems to produce 
 
 #### full dataset {.unlisted .unnumbered}
 ```{r PDP3 random_interleave_fraction superSmashy}
-plotPartialDependence(superBohbBestTask, features = c("random_interleave_fraction"), rug = FALSE, gridsize = 20)
+plotPartialDependence(superBohbBestTask, features = c("random_interleave_fraction"), rug = FALSE, gridsize = 20, plotICE = FALSE)
 ```
 
 #### top 20% {.unlisted .unnumbered}
 ```{r PDP4 random_interleave_fraction superSmashy}
-plotPartialDependence(superRandomBestTask, features = c("random_interleave_fraction"), rug = FALSE, gridsize = 20)
+plotPartialDependence(superRandomBestTask, features = c("random_interleave_fraction"), rug = FALSE, gridsize = 20, plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -1544,23 +1544,23 @@ plotPartialDependence(superRandomBestTask, features = c("filter_factor_last"), r
 
 #### Bohb: full dataset
 ```{r PDP filter_with_max_budget superSmashy}
-plotPartialDependence(superBohbTask, "filter_with_max_budget", rug = FALSE)
+plotPartialDependence(superBohbTask, "filter_with_max_budget", rug = FALSE, plotICE = FALSE)
 ```
 
 #### bohb: subdivided dataset
 ```{r PDP2 filter_with_max_budget superSmashy}
-plotPartialDependence(superBohbBestTask, features = c("filter_with_max_budget"), rug = FALSE)
+plotPartialDependence(superBohbBestTask, features = c("filter_with_max_budget"), rug = FALSE, plotICE = FALSE)
 ```
 
 
 #### random: full dataset
 ```{r PDP3 filter_with_max_budget superSmashy}
-plotPartialDependence(superRandomTask, "filter_with_max_budget", rug = FALSE)
+plotPartialDependence(superRandomTask, "filter_with_max_budget", rug = FALSE, plotICE = FALSE)
 ```
 
 #### random: subdivided dataset
 ```{r PDP4 filter_with_max_budget superSmashy}
-plotPartialDependence(superRandomTask, features = c("filter_with_max_budget"), rug = FALSE)
+plotPartialDependence(superRandomTask, features = c("filter_with_max_budget"), rug = FALSE, plotICE = FALSE)
 ```
 
 ### {.unlisted .unnumbered}
@@ -1620,3 +1620,4 @@ The **filter_factor_last** parameter was not really important for the lcbench da
 Easy to set is the **filter_with_max_budget**. This parameter should always be "TRUE" for both datasets. 
 
 Also the parameter **filter_algorithm**, **filter_select_per_tournament** and **random_interleave_random** have barely an effect and therefore do not need to be limited.
+
