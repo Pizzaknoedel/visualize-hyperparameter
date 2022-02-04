@@ -1,6 +1,6 @@
 #' @import checkmate
 #' @import mlr3
-#' @import ggplot2
+#' @rawNamespace import(ggplot2, except = last_plot)
 #' @import mlr3pipelines
 #' @import mlr3learners
 #' @import plotly

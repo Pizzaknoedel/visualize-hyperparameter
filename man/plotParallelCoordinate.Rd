@@ -15,7 +15,8 @@ plotParallelCoordinate(
   colbarreverse = FALSE,
   autosort = TRUE,
   numericNA = "Max",
-  title = FALSE
+  title = FALSE,
+  titleheight = 0.95
 )
 }
 \arguments{
@@ -29,7 +30,7 @@ Names of columns to plot. If NULL, then each column will be plotted. Default is 
 The side of the labels for the scales. It can be chosen between "Top" and "Bottom". Default is "Top".}
 
 \item{labelangle}{(\code{numeric(1)}) \cr
-The angle for the labels. Default is 0.}
+The height for the title Default is 0.95.}
 
 \item{colbarrange}{(\code{numeric(2)}) \cr
 A vector with two numeric values. Its distance specifies the range of the color bar for the labeled target.

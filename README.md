@@ -25,6 +25,15 @@ You can install the development version of VisHyp from
 devtools::install_github("Pizzaknoedel/visualize-hyperparameter")
 ```
 
+## Shiny
+
+To launch the Shiny application included in the package, execute the
+following function after loading the package:
+
+``` r
+launchVisHyp()
+```
+
 ## Example
 
 This is a basic example which shows you how to plot the four implemented
@@ -52,25 +61,6 @@ plotPartialDependence(task)
 
 ``` r
 #![]("https://github.com/Pizzaknoedel/visualize-hyperparameter/tree/main/man/figures/lcbench_Best_PCP.png")
-```
-
-``` r
-# After downloading the package it is also possible to visualize hyperparameter dependencies with an integrated shiny app. Just write
-launchVisHyp()
-```
-
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
-
-``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
 ```
 
 You’ll still need to render `README.Rmd` regularly, to keep `README.md`

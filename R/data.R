@@ -1,7 +1,7 @@
 #' logloss Performance for two hyperparameter.
 #'
 #' A dataset containing the `logloss` performance meassure and the two hyperparameter `s` and `alpha`.
-#' The dataset is from the [glmnet] package.
+#' The dataset is from the glmnet package.
 #'
 #' @format \code{glmnet_ela} is a data frame with 49 rows and 3 variables:
 #' \describe{

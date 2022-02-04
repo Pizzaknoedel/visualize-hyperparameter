@@ -39,8 +39,6 @@ VisualizationServer <- function(id, data) {
 
       # first the plot types need to be initialized.
       # since it is not possible to plot 4 plots at the same time, 4 different initializations of the plot types are required.
-
-
       # UI Plot 1
       plotTypes1 <- reactive({
 

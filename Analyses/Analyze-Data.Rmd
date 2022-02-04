@@ -1,7 +1,7 @@
 ---
 title: "Analyze data"
 author: "Simon Pradel"
-date: "19 12 2021"
+date: "08 02 2022"
 output: 
   html_document:
     theme: "default"
@@ -22,25 +22,25 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, messages = FALSE)
 
 ## Idea
 
-The idea of analyzing the smashy_lcbench and smashy_super datasets is to understand the dependencies between the hyperparameters and the target variable **yval**, using the implemented plots from the VisHyp package and, most importantly, without the help of any automatic optimization. We want to understand which parameter is important, i.e. has a great influence on the result. We want to know which parameter needs to be set more precisely and for which parameter the value is almost irrelevant. In addition, we want to comprehend the dependencies between the parameters themselves. Finally, we want to compare the results of the two data sets. In the end we want to compare the results of both datasets.
+The idea of the analysis of the datasets smashy_lcbench and smashy_super is to understand the dependencies between the hyperparameters and the target variable **yval**, using the implemented plots from the VisHyp package and, most importantly, without the help of any automatic optimization. We want to understand which parameter is important, i.e. has a large impact on the result, which parameter needs to be set more precisely and for which parameter the value is almost irrelevant. Furthermore, we want to understand the dependencies between the parameters themselves. Finally, we want to compare the results of the two datasets. 
 
-For each dataset, we want to examine the entire data set and the best 20% of the **yval** values to get a more detailed insight into the configurations of the best results. We will partition our data with the bounded range per parameter to obtain a subset of configurations with good yval values. We will also look at this constrained parameter range using PCPs. 
+For each dataset, we want to examine the entire dataset and the best 20% of the **yval** values to get a more detailed insight into the configurations of the best results. We will partition our data with the bounded range per parameter to obtain a subset of configurations with good **yval** values. We will also look at this constrained parameter range using PCPs. 
 
-For the analysis of the data we will use importance plot, partial dependence plots (PDP), heatmaps and parallel coordinate plots (PCP). Importance plots provide the most important parameters. For a fast overview we will use heatmaps. For deeper insight in the marginal structure as well for dependencies between 2 parameters we then will use Partial Dependence Plots (PDP). Only when the data set has been reduced in size we also can use Parallel Coordiante Plots (PCP) to get a good impression over parameter configurations. In addition, we will look at the data using Summaries to draw further conclusions. 
+We will use Importance Plots, Partial Dependence Plots (PDP), Heatmaps, and Parallel Coordinate Plots (PCP) to analyze the data. Importance plots provide the most important parameters. For a quick overview, we will use heatmaps. For a deeper insight into the boundary structure as well as for dependencies between 2 parameters we will then use Partial Dependence Plots (PDP). Only when the dataset has been reduced in size, we can also use Parallel Coordiante Plots (PCP) to get a good impression about parameter configurations. In addition, we will look at the data using Summaries to draw further conclusions.
 
-## Structure and outline
+## Structure and Outline
 
-This analysis is structured as follows, first the treated data set is prepared, so that one can use it for analyses. Then there are the results of the analysis including suggestions for good configuration ranges of the individual parameters. The analyses and deeper insights into the analyses of the individual parameters, they can be selected in the Table of Content (TOC) on the left side. Before this chapter, an overview of the data set is given. Finally, the results of the two data sets are compared.
+This analysis is structured as follows, first the treated dataset is prepared, so that one can use it for analyses. Then, the analysis is performed and the results are used to suggest good configuration ranges for each parameter. The analyses and deeper insights into the analyses of each parameter, can be selected in the Table of Contents (TOC) on the left. Prior to this chapter, an overview of the dataset is provided. Finally, the results of the two datasets are compared.
 
 # Dataset: smashy_lcbench 
 
 ## Data Preparation
 
-We need to load packages and subset the data to compare the whole dataset and the dataset with the 20% of configurations with the best outcome. In addition, the data must be manipulated to facilitate the use of the data for summaries and filters.
+We need to load packages and subdivide the data to compare the whole dataset and the dataset with the 20% of configurations with the best result. In addition, the data must be manipulated to facilitate the use of the data for summaries and filters.
 
 ### Load Data
 
-```{r packages and data, warning = FALSE, messages = FALSE}
+```{r packages and data, warning = FALSE, messages = FALSE, echo = FALSE}
 library(VisHyp)
 library(mlr3)
 library(plotly)
@@ -57,7 +57,7 @@ for (i in 1:nl) {
 }
 ```
 
-All plots from the VisHyp package require an mlr3 task object as input. Therefore, an mlr3 task with the selected target is required. For lcbench it is yval, which is a logloss performance measurement. Values close to 0 mean good performance. 
+All plots from the VisHyp package require an mlr3 task object as input. Therefore, a mlr3 task with the selected target is required.For lcbench, the target is **yval**, a logloss performance measure.  Values near 0 indicate good performance. 
 
 ### Create Task
 
@@ -71,57 +71,57 @@ bestTask <- TaskRegr$new(id = "bestTask", backend = lcbenchBest, target = "yval"
 
 ## Results
 
-The target parameter yval can reach values between -0.9647 and -0.4690. Our goal is to obtain good results, i.e., to find configurations that produce values close to -0.4690.
+The target parameter **yval** can reach values between -0.9647 and -0.4690. Our goal is to obtain good results, i.e., to find configurations that produce values close to -0.4690.
 
-The most important parameter is **sample**. It should always be chosen "bohb" and not "random", because 2130 of the best configurations 2143 were created with this factor and the average effect on yval is much larger when "bohb" is chosen.
+The most important parameter is **sample**. It should always be chosen "bohb" and not "random", because 2130 of the best 2143 configurations were created with this factor and the average effect on **yval** is much larger when "bohb" is chosen.
 
-The next very important parameter is the **survival_fraction**. It can be seen that a low value is good on average, but high values are good as well for the best configurations. For a good average performance without further restriction it should be chosen a value between 0.15 and 0.5. If a **surrogate_learner** is selected, the constraint of the parameter should be selected according to the selected **surrogate_learner**. 
+The next very important parameter is the **survival_rate**. It can be seen that a low value is better on average, but high values can also be good for the best configurations. A value between 0.15 and 0.5 should be chosen for a high average performance without any further limitation. If a **surrogate_Learner** is selected, the constraint of the parameter should be chosen according to the selected **surrogate_Learner**. 
 
-Even though the **surrogate_learner** parameter is not that important, it influences most other parameters. This means that other parameter values should be set depending on the selected **surrogate_learner** if they have different effects on the performance measure. An indication that the **surrogate_learner** parameter has a large impact on the other parameters was given by the Importance Plot for the partial data sets split by **surrogate_learner**. This assigned different importance to the individual parameters, depending on the subset selected. This is especially noticeable for bohb **samples**. Parameters that should be selected depending on the chosen **surrogate_learner** are listed below. However, there are also findings of which **surrogate_learner** gives the best results: In the full dataset, **surrogate_learner** knn1 or knn7 showed the best performance and ranger the worst. For the top cases, we saw that many bohblrn and rangers were filtered out in disproportionate numbers. Surprisingly, bohblrn turned out to be the level of greatest importance.  
+Even though the **surrogate_learner** parameter is not that important, it influences most other parameters. This means that other parameter values should be set depending on the selected **surrogate_learner** if they have different effects on the performance measure. An indication that the **surrogate_learner** parameter has a large impact on the other parameters was given by the Importance Plot for the partial datasets split by **surrogate_learner**. This assigned different importance to the individual parameters, depending on the subset selected. This is especially noticeable for "bohb" **samples**. Parameters that should be selected depending on the chosen **surrogate_learner** are listed below. However, there are also findings of which **surrogate_learner** gives the best results: In the full dataset, **surrogate_learner** knn1 or knn7 showed the best performance and ranger the worst. For the top cases, we saw that many bohblrn and rangers were filtered out in disproportionate numbers. Surprisingly, bohblrn turned out to be the level of greatest importance.  
 
 knn1:
-**survival_fraction** should get a value over 0.5 if we are interesting in the top cases. For the full dataset the best cases were on average under 0.5
-**random_interleave_fraction** should be low and have a value between 0.05 - 0.5 according to the full data set.
+**survival_fraction** should get a value above 0.5 if we are interested in the best cases. For the whole dataset, the best cases were on average below 0.5
+**random_interleave_fraction** should be low and have a value between 0.05 and 0.5 according to the complete dataset.
 **budget_log_step** should be chosen between -0.5 and 0.5. 
 **filter_factor_first** should get a value under 4. 
-**filter_select_per_tournament** should get a value over 0.9
+**filter_select_per_tournament** should get a value over 0.9.
 
 knn7:
-**Filter_factor_First** should be under 4
+**filter_factor_first** should be under 4.
 **survival_fraction** should be between 0.1 and 1 according to both, the full dataset and the subset. 
-**budget_log_step** produces good performances for values for -0.5 and 1 but has not a big impact in general. **random_interleave_fraction**should be between 0.25 and 0.75 according to the full dataset. In the subset it doesn't matter. 
-**random_interleave_random** should be FALSE. 
+**budget_log_step** produces good performances for values between -0.5 and 1 but has not a big impact in general. **random_interleave_fraction**should be between 0.25 and 0.75 according to the full dataset. In the subset it doesn't matter. 
+**random_interleave_random** should be "FALSE". 
 **filter_select_per_tournament** should be over 0.5. 
 
 bohblrn:
 **random_interleave_fraction** better if lower. A good valuer should be between 0.05 and 0.65.
 **survival_fraction** lower is better in the full dataset but it doesnt matter for the best configurations 
-**budget_log_step** it is hard to tell because of fluctuation but should be at least over -1.5, even
-**filter_algorithm** should be "progressive"
-**filter_factor_last** should be over 5
-**filter_factor_first** should not be restricted
+**budget_log_step** it is hard to tell because of fluctuation but should be at least over -1.5.
+**filter_algorithm** should be "progressive".
+**filter_factor_last** should be over 5.
+**filter_factor_first** should not be restricted.
 
 ranger:
-**random_interleave_fraction** should be over 0.25
-**survival_fraction** under 0.75
-**budget_log_step** should be over -1.5
+**random_interleave_fraction** should be over 0.25.
+**survival_fraction** should be under 0.75.
+**budget_log_step** should be over -1.5.
 
 
-Another important parameter for the general case is the **random_interleave_fraction** parameter. We have found that in general low values under 0.3 are better for random **samples**, and values between 0.1 and 0.75 are better for bohb **samples**. But this is only the case because it depends on **surrogate_learner**, and diser has many observations for levels knn1 and knn7. For these levels, a low value must be chosen to get a good result. For the "bohb" sample, values in the middle are better and for "ranger" high values achieve the best yval values. For the top cases, the parameter lost importance. This could be because the counter case with "random" **samples** are almost completely filtered out. The level factor did not change the behavior for the top case (for bobhlrn, the middle range is not so important anymore). 
+Another important parameter for the general case is the **random_interleave_fraction** parameter. We have found that in general low values under 0.3 are better for "random" **samples**, and values between 0.1 and 0.75 are better for "bohb" **samples**. But this is only the case because it depends on **surrogate_learner**, and diser has many observations for levels knn1 and knn7. For these levels, a low value must be chosen to get a good result. For the "bohb" **sample**, values in the middle are better and for "ranger" high values achieve the best **yval** values. For the top cases, the parameter lost importance. This could be because the counter case with "random" **samples** are almost completely filtered out. The level factor did not change the behavior for the top case (for bobhlrn, the middle range is not so important anymore). 
 
-The second most important parameter for Bohb sampling is the **budget_log_step** parameter. For the full data set this parameter should be set between -0.5 and 1, but when choosing a **surrogate_learner** the parameter should be set according to this parameter.
+The second most important parameter for "bohb" sampling is the **budget_log_step** parameter. For the full dataset this parameter should be set between -0.5 and 1, but when choosing a **surrogate_learner** the parameter should be set according to this parameter.
 
-**filter_with_max_budget** is not an important in general but should always be set to "TRUE" and is more important for bohb samples. Anyway, the effect is important for the **surrgoate_learner** bohblrn in top cases.
+**filter_with_max_budget** is not an important in general but should always be set to "TRUE" and is more important for "bohb" **samples**. Anyway, the effect is important for the **surrgoate_learner** "bohblrn" in top cases.
 
-**filter_factor_first** is the most important parameter for the top 20%. It also has a higher importance in random samples than in bohb samples. In general it should be low (under 4) for bohb samples and high (near to 6) for random samples. The parameter **filter_factor_first** should not be restricted if the **surrogate_learner** is "bohblrn."
+**filter_factor_first** is the most important parameter for the top 20%. It also has a higher importance in "random" **samples** than in "bohb" **samples**. In general it should be low (under 4) for "bohb" **samples** and high (near to 6) for "random" **samples**. The parameter **filter_factor_first** should not be restricted if the **surrogate_learner** is "bohblrn."
 
-**filter_factor_last** The effect is low and shouldn't be used to subdivide the data set in general.
+**filter_factor_last** The effect is low and shouldn't be used to subdivide the dataset in general.
 
 **filter_select_per_tournament** shouldn't be too high in general case but doesnt really matter for good results.
 
-**filter_algorithm** and **random_interleave_random** have barely an effect and get be let out for deeper investigations. Only for the **surrogate_learner** "bohblrn" it should be considered. 
+**filter_algorithm** and **random_interleave_random** have hardly any effect and can be left out for deeper investigations. Only for **surrogate learner** the factor "bohblrn" should be considered. 
 
-### Data constraint to check the results
+### Data Constraint to Check the Results
 
 To verify the proposed parameter configurations, we constrain the dataset and compare the obtained performance with the ranks of the performance of the whole dataset. 
 
@@ -139,18 +139,21 @@ lcbenchYvalOriginal <- sort(lcbenchSmashy$yval, decreasing = TRUE)
 sort(match(lcbenchYval, lcbenchYvalOriginal), decreasing = FALSE)
 ```
 
-We can see that many good results were obtained, but not nearly all of the best configurations were found out. This can be explained by the fact that we often imposed constraints to reduce the size of the data set. For example, for some categorical parameters, we always chose one factor even though we knew that other categories could also yield good values. Furthermore, numerical parameters were partly restricted, although it was known that for some very good configurations, very good yval values can also be obtained outside the range. 
+We can see that many good results were obtained, but not nearly all of the best configurations were found out. This can be explained by the fact that we often imposed constraints to reduce the size of the dataset. For example, for some categorical parameters, we always chose one factor even though we knew that other categories could also yield good values. Furthermore, numerical parameters were partly restricted, although it was known that for some very good configurations, very good yval values can also be obtained outside the range. 
 
 Most interestingly, we get many good results, but also some seemingly bad ones. This could be due to hidden interactions that were not found, or inaccuracies in the constraints placed on the parameters by the visualization plots. In the second possibility, the poorer performance values could be due to errors in the interpretation of the plots. But also difficulties with the surrogate model could be decisive if predicted values of the performance values are not determined correctly. In addition, an inappropriate grid size in a PCP can lead to inaccuracies. 
 
+Finally some metrics are used to verify the results. The importance of the metrics can be found in the bachelor thesis. 
 
 ```{r}
 summary(lcbenchEvaluation$yval)
 #proportion
-length(lcbenchEvaluation$yval)/length(smashy_lcbench$yval)
+length(lcbenchEvaluation$yval)/length(lcbenchSmashy$yval)
 #top congifuration
-sum(lcbenchYval >= quantile(smashy_lcbench$yval, 0.95))/length(lcbenchYval)
-sum(smashy_lcbench$yval >= quantile(smashy_lcbench$yval, 0.95))/length(smashy_lcbench$yval)
+sum(lcbenchYval >= quantile(lcbenchSmashy$yval, 0.95))/length(lcbenchYval)
+#quantile
+sum(lcbenchSmashy$yval<=max(lcbenchYval))/length(lcbenchSmashy$yval)
+
 ```
 
 
@@ -159,17 +162,13 @@ sum(smashy_lcbench$yval >= quantile(smashy_lcbench$yval, 0.95))/length(smashy_lc
 
 With the implemented PCP our Results can be visually checked. 
 
-```{r, eval = FALSE, echo = TRUE}
-plotParallelCoordinate(lcbenchTask, labelangle = 10)
-```
-
-#### Limitation to very good configurations
+#### Limitation to Good Configurations
 
 ```{r,  out.width="100%"}
 knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Best_PCP.png")
 ```
 
-#### Limitation to bad configurations
+#### Limitation to Bad Configurations
 
 ```{r, out.width="100%"}
 knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Latex/Grafiken/lcbench_Bad_PCP.png")
@@ -186,6 +185,7 @@ For visual analysis it is important to know the configuration spaces and the cla
 ```{r head lcbenchSmashy}
 head(lcbenchSmashy)
 ```
+
 ### Structure
 ```{r structure lcbenchSmashy}
 str(lcbenchSmashy)
@@ -195,7 +195,7 @@ We want to look at the importance for the whole dataset (general case) and for t
 
 ## {.tabset .unlisted .unnumbered}
 ### Importance General
-```{r importance lcbenchSmashy} 
+```{r Importance lcbenchSmashy} 
 plotImportance(lcbenchTask)
 ```
 
@@ -206,15 +206,15 @@ plotImportance(bestTask)
 
 ## {.unlisted .unnumbered}
 
-For the general case, **sample** is the most important hyperparameter. The **random_interleave_random** parameter has little importance. For the best configurations, **filter_factor_first** and **filter_factor_last** are the most important parameters. The **sample** parameter no longer has any importance. The ranking of the parameters has changed a lot, but the value of the importance measure has not changed a lot for the parameters except for **sample**. We also look at a PCP:
+For the general case, **sample** is the most important hyperparameter. The **random_interleave_random** parameter is of little importance. For the best configurations, **filter_factor_first** and **filter_factor_last** are the most important parameters and the **sample** parameter is no longer of importance. The ranking of the parameters has changed a lot, but the value of the importance measure has hardly changed for the parameters except for the **sample** parameter. We also look at a PCP:
 
 ```{r}
 plotParallelCoordinate(lcbenchTask)
 ```
 
 
-It can be seen that there are too many observations to see a lot. PCP makes more sense with few observations.
-After we have subdivided the data, we first look for structural changes.
+It can be seen that there are too many observations to see much. The PCP makes more sense with fewer observations.
+After dividing the data, we first look for structural changes.
 
 
 ## {.tabset .unlisted .unnumbered}
@@ -225,23 +225,23 @@ summary(lcbenchSmashy)
 ```
 
 ### Summary Best 20% {.unlisted .unnumbered}
-```{r smashy_lcbench2 lcbenchSmashy}
+```{r lcbenchSmashy2 lcbenchSmashy}
 summary(lcbenchBest)
 ```
 
 ## {.unlisted .unnumbered}
 
-surrogate_learner: Many bohblrn and rangers were kicked out in disproportionate numbers. This could mean that these learner perform worse on average.
-filter_with_max_budget: In proportion more FALSE were filtered out. This could means that TRUE values perform better on average. 
-We can see that only 13 rows of the the best 20% configurations have random sampling. The other (over 2100) instances have used Bohb sampling. That is also the reason why the parameter **sample** has no importance for the subdivided  dataframe since there are barely configurations for "random" **samples** left
+surrogate_learner: Many "bohblrn" and "rangers" were kicked out in disproportionate numbers. This could mean that these learner perform worse on average.
+filter_with_max_budget: In proportion more "FALSE" were filtered out. This could means that "TRUE" values perform better on average. 
+We can see that only 13 rows of the the best 20% configurations have "random" sampling. The other (over 2100) instances have used "bohb" sampling. That is also the reason why the parameter **sample** has no importance for the subdivided dataframe since there are barely configurations **samples** with the factor "random" left.
 
 The hyperparameter will be examined in following sections more precise. 
 
-## Examination of the parameters
+## Examination of the Parameters
 
 ### sample { .tabset}
 
-As we could find out, "sample" is the most important parameter in the full dataset. This parameter should have the right value for good performance. So, let's look at the effect of the variables in a partial dependency diagram. We also check if the effect applies to all parameters. We can use a heatmap to get a quick overview of interactions. Values close to 1 have barealy an effect on the outcome. 
+As we could notice, **sample** is the most important parameter in the full dataset. This parameter should have the right value to perform well. So let's look at the effect of the variables in a PDP. We also check if the effect applies to all parameters. We can use a Heatmap to get a quick overview of the interactions. Values close to 1 have hardly any effect on the result. 
 
 
 #### PDP 
@@ -266,11 +266,11 @@ nrows = 5,shareX = TRUE)
 ```
 ### {.unlisted .unnumbered}
 
-PDP: It can be seen that the target values for bohb samples lead always to better results on average than for random samples.  
+PDP: It can be seen that the target values for "bohb" **samples** lead always to better results on average than for "random" **samples**.  
 
-Heatmaps: Note that **survival_fraciton** and **random_interleave_fraction** may give better results if a lower value is chosen for their parameter. Also, the **surrogate_learner** knn1 and knn7 seem to give better results. On average, the bohb sample is better, but let's look at the best results and the combination of their instances.
+Heatmaps: Note that **survival_fraciton** and **random_interleave_fraction** may give better results if a lower value is chosen for their parameter. Also, the **surrogate_learner** knn1 and knn7 seem to give better results. On average, the "bohb" sample is better, but let's look at the best results and the combination of their instances.
 
-We want to look at only the best configurations and verify that mostly "bohb" samples occur. Therefore we split the data set into "bohb" and "random" samples.
+We want to look at only the best configurations and verify that mostly "bohb" **samples** occur. Therefore we split the dataset into "bohb" and "random" **samples**.
 
 ```{r Subset lcbenchSmashy}
 random <- lcbenchSmashy[lcbenchSmashy$sample == "random",]
@@ -280,9 +280,9 @@ randomTask <- TaskRegr$new(id = "task_random", backend = random, target = "yval"
 bohbTask <- TaskRegr$new(id = "task_bohb", backend = bohb, target = "yval")
 ```
 
-We do split the entire data set for the best configurations because we assume differences betwween "random" and "bohb" **samples** because many "random" were filtered out and the parameter lost a lot of importance. For these reasons, we split the data set and focus primarily on the Bohb sample in what follows. For the best 20% configurations we focus on bohb only.
+We do split the entire dataset for the best configurations because we assume differences between "random" and "bohb" **samples** because many "random" were filtered out and the parameter lost a lot of importance. For these reasons, we split the dataset and focus primarily on the "bohb" **sample** in what follows. For the best 20% configurations we focus on "bohb" only.
 
-Let's check if there are differences in importance for the parameters in the random subset and the Bohb subset.
+Let's check if there are differences in importance for the parameters in the "random" subset and the "bohb" subset.
 
 ### {.tabset .unlisted .unnumbered}
 #### Subset bohb
@@ -299,14 +299,14 @@ plotImportance(randomTask)
 
 The hyperparameter **survival_fraction** is the most important parameter. Also **random_interleave_fraction** has high importance for both subsets. The parameters **filter_algorithm** and **random_interleave_random** do not seem to be important at all.
 
-Bohb Sample: The parameter **budget_log_step** is now more important. In the first plot, this parameter was not ranked that high. So we can assume that it is very important for this subset. The importance of the other parameters has not changed that much compared to the full data but the hyperparameter **surrogate_learner** and **filter_with_max_budget** are more important than for random samples.
+Bohb sample: The parameter **budget_log_step** is now more important. In the first plot, this parameter was not ranked that high. So we can assume that it is very important for this subset. The importance of the other parameters has not changed that much compared to the full data but the hyperparameter **surrogate_learner** and **filter_with_max_budget** are more important than for "random" **samples**.
 
-Random Sample: It looks like the right Parameter configuration is more important in the bohb sample because The parameter Importance values are in general higher than in the bohb sample. The parameters **filter_factor_last** and **filter_factor_first** have a higher importance in the random sample. 
+Random sample: It looks like the right parameter configuration is more important in the "bohb" **sample** because The parameter importance values are in general higher than in the "bohb" **sample**. The parameters **filter_factor_last** and **filter_factor_first** have a higher importance in the "random" **sample**. 
 
 
 #### Top 20% {.unlisted .unnumbered}
 
-We could see in the beginning that most of the good results were gained with bohb samples. That's why we will focus on bohb samples only from now on. That is, we remove the 13 rows of "random" samples from the underlying data. 
+We could see in the beginning that most of the good results were gained with "bohb" **samples**. That's why we will focus on "bohb" **samples** only from now on. That is, we remove the 13 rows of "random" **samples** from the underlying data. 
 
 
 ```{r bohbBest Task}
@@ -317,7 +317,7 @@ bohbBestTask <- TaskRegr$new(id = "bohbBestTask", backend = bohbBest, target = "
 
 ### survival_fraction {.tabset} 
 
-The **survival_fraction** parameter is the most important parameter for both samples of the entire data set. With a PDP, we can gain better insight into how the parameter should be configured. 
+The **survival_fraction** parameter is the most important parameter for both **samples** of the entire dataset. With a PDP, we can gain better insight into how the parameter should be configured. 
 
 #### Subset bohb
 ```{r PDP bohbTask}
@@ -335,7 +335,7 @@ In general, lower values achieve better performance than higher values. For the 
 
 #### Top 20% {.unlisted .unnumbered}
 
-A possibility to find reasons for the structure is to filter the data again. For this we can split the data according to the best 20% yval values of the bohb samples
+A possibility to find reasons for the structure is to filter the dataset again. For this we can split the data according to the best 20% **yval** values of the "bohb" **samples**
 
 ```{r PDP bohbBestTask}
 plotPartialDependence(bohbBestTask, features = c("survival_fraction"), rug = TRUE, plotICE = FALSE, gridsize = 20)
@@ -346,13 +346,13 @@ In this case, higher values seem to be somewhat better. This is surprising, sinc
 
 ### surrogate_learner {.tabset}
 
-Another important parameter for bohb subset is the **surrogate_learner**. 
+Another important parameter for "bohb" subset is the **surrogate_learner**. 
 
 ```{r PDP surrogate_learner }
 plotPartialDependence(bohbTask, features = c("surrogate_learner"), rug = FALSE, plotICE = FALSE)
 ```
 
-In this diagram, knn1 and knn7 seem to be the best choices based on the results so far. For a more detailed analysis, we should divide the data into the individual **surrogate_learners** again and check if there are difference in the importance of the remaining parameters.
+In this graphic, knn1 and knn7 seem to be the best choices based on the results so far. For a more detailed analysis, we should divide the data into the individual **surrogate_learners** again and check if there are difference in the importance of the remaining parameters.
 
 ```{r Overview surrogate_learner}
 knn1 <- bohb[bohb$surrogate_learner == "knn1",] 
@@ -388,14 +388,13 @@ plotImportance(rangerTask)
 
 ### {.unlisted .unnumbered}
 
-The parameter **survival_fraction** is very important for the bohblrn and knn1 Subset. This could already be seen in the pdp for **survival_fraction**. The hyperparameter **random_interleave_fraction** has high importance for all **surrogate_learners**. For knn7 **budget_log_step** seems to be more important than for other **surrogate_learner**. To check why the importance differs and whether the parameters have different "good" ranges, let's take a closer look at 3 very important parameters. We use ICE curves here to gain further insight. Later we check each factor separately for the top 20% of the configuration to find differences. 
+The parameter **survival_fraction** is very important for the "bohblrn" and "knn1" subset. This could already be seen in the PDP for **survival_fraction**. The hyperparameter **random_interleave_fraction** has high importance for all **surrogate_learners**. For the factor "knn7" the parameter **budget_log_step** seems to be more important than for other factors of the **surrogate_learner** parameter. To check why the importance differs and whether the parameters have different good ranges, let's take a closer look at 3 very important parameters. We use ICE curves here to gain further insight. Later we check each factor separately for the top 20% of the configuration to find differences. 
 
 ### {.tabset .unlisted .unnumbered}
 
 #### knn1: random_interleave_fraction 
 ```{r PDP1 surrogate_learner}
 plotPartialDependence(knn1Task, "random_interleave_fraction", plotICE = FALSE)
-
 ```
 
 #### knn7: random_interleave_fraction 
@@ -415,7 +414,7 @@ plotPartialDependence(rangerTask, "random_interleave_fraction", plotICE = FALSE)
 
 ### {.unlisted .unnumbered}
 
-For knn1, lower **random_interleave_fraction** values seem to be better. For knn7 and bohblrn, the **random_interleave_fraction** values should be neither too high nor too low, and for ranger, higher values lead to better yval results. A good range for bohblrn seems to be between 0.05 and 0.65. For knn1 a value between 0.05 and 0.5 seems good. A good range for knn7 seems to be between 0.25 and 0.75
+For "knn1", lower **random_interleave_fraction** values seem to be better. For "knn7" and "bohblrn", the **random_interleave_fraction** values should be neither too high nor too low, and for "ranger", higher values lead to better **yval** results. A good range for "bohblrn" seems to be between 0.05 and 0.65. For knn1 a value between 0.05 and 0.5 seems good. A good range for "knn7" seems to be between 0.25 and 0.75
 
 
 ### {.tabset .unlisted .unnumbered}
@@ -468,7 +467,7 @@ plotPartialDependence(rangerTask, "budget_log_step", plotICE = FALSE)
 
 ### {.unlisted .unnumbered}
 
-It is very interesting that the line for the parameter **budget_log_step** shows repeated dips. It is only for knn7 and knn1. The range is hard to identify since it also depends on the gridsize of the plot. It can be said that a value over -0.5 is a good choice  knn7 and ranger. For bohb there are repeated dips but a value should be over -0.5. For knn1 and knn7 values bewteen -0.5 and 1 seems to archieve good results. 
+It is very interesting that the line for the parameter **budget_log_step** shows repeated dips. It is only for the factors "knn7" and "knn1". The range is hard to identify since it also depends on the gridsize of the plot. It can be said that a value over -0.5 is a good choice  knn7 and "ranger." For "bohb" there are repeated dips but a value should be over -0.5. For "knn1" and "knn7" values bewteen -0.5 and 1 seems to achieve good results. 
 
 #### Top 20% {.unlisted .unnumbered}
 
@@ -478,11 +477,11 @@ We also want to invest the best cases and for this directly check the subdivided
 plotPartialDependence(bestTask, features = c("surrogate_learner"), rug = FALSE, plotICE = FALSE)
 ```
 
-the **surrogate_learner** "bohblrn" is now most important, and "ranger" is cleary more important now.
+the factor "bohblrn" of the **surrogate_learner** parameter is now most important, and the factor "ranger" is cleary more important now.
 
 ### surrogate_learner bohblrn {.tabset .unlisted .unnumbered}
 
-Lets investigate the surprising outcome of **surrogate_learner** class bohblrn
+Lets investigate the surprising outcome of **surrogate_learner** class "bohblrn"
 ```{r PDP bohblrn BestTask}
 bohblrnBest <- bohbBest[bohbBest$surrogate_learner == "bohblrn",]
 
@@ -503,12 +502,11 @@ plotImportance(bohblrnTaskBest)
 ### {.unlisted .unnumbered}
 
 
-PCP: A high value for **filter_factor_last** value could be better since there a lot of lines + high yval.
-The **filter_with_max_budget** parameter should be set to "TRUE" and the parameter **filter_algorithm** should be set to "progressive". It looks like high **budget_log_step** brings best results. The parameter **filter_factor_first** should be restricted.
+PCP: A high value for the **filter_factor_last** parameter could be better since there a lot of lines + reach high **yval** values. The **filter_with_max_budget** parameter should be set to "TRUE" and the parameter **filter_algorithm** should be set to "progressive". It looks like high **budget_log_step** achieve best results. The parameter **filter_factor_first** should be restricted.
 
 Importance Plot: In the genereal case for bohblrn **survival_fraction** was most important (by far!), now it is **budget_log_step** and **filter_with_max_budget**. 
 
-Let's investigae why **survival_fraction** lost in importance.
+Let's investigate why the **survival_fraction** parameter lost in importance.
 
 ### {.tabset .unlisted .unnumbered}
 #### bohblrn: full Dataset 
@@ -523,9 +521,9 @@ plotPartialDependence(bohblrnTask, "survival_fraction")
 
 ### {.unlisted .unnumbered}
 
-Before a high survival_fraction led to a drop, but one can see that it doesnt effect very good results! Here we can see why as an addition to the PDP, ICE Curves can be useful as well.
+Before a high **survival_fraction** led to a drop, but one can see that it doesn't effect very good results! Here we can see why as an addition to the PDP, ICE Curves can be useful as well.
 
-Let us observe the other impotant parameter from PCP and important plot for the "bohblrn" of **surrogate_learner**.
+Let us observe the other impotant parameter from PCP and Importance Plot for the "bohblrn" of **surrogate_learner**.
 
 ### {.tabset .unlisted .unnumbered}
 #### bohblrn: PDP budget_log_step 
@@ -553,13 +551,13 @@ summary(bohblrn$filter_algorithm)
 
 ### {.unlisted .unnumbered}
 
-In general **budget_log_step** perform better with higher values. Worse prediction do barely increase with a higher value. There are also little drops around -0.3 to 0.5 
+In general **budget_log_step** perform better with higher values but worse prediction do barely increase with higher configuration values. There are also little drops around -0.3 to 0.5.
 
-**Filter_with_max_budget** should be set to TRUE. there are more observations than in FALSE. In proportion, more FALSE have already been thrown out and therefore this is another indication that TRUE is the choice for better yval. 
+**Filter_with_max_budget** should be set to "TRUE". There are more observations left than in the subset with factor "FALSE". In proportion, more "FALSE" have already been thrown out and therefore this is another indication that "TRUE" is the choice for better **yval**. 
 
-The Parameter **filter_factor_last** high values could perform results best because even the the differences are low there are more observations than on other areas. A good choice for a configuration is over 5.
+The Parameter **filter_factor_last** high values could perform results best because even the the differences are low there are more observations than on other ranges. A good choice for a configuration is over 5.
 
-The thesis that **filter_algorithm** should be "progressive" can be confirmed. The partial Dependence Plot doesnt show it but a lot of tournament got filtered out.
+The thesis that **filter_algorithm** should be "progressive" can be confirmed. The Partial Dependence Plot doesnt show it but a lot of tournament got filtered out.
 
 ### surrogate_learner knn1 {.unlisted .unnumbered}
 
@@ -586,15 +584,15 @@ plotImportance(knn1BestTask)
 ### {.tabset .unlisted .unnumbered}
 
 PCP: The parameter **filter_with_max_budget** should set to "TRUE".
-It looks like there a specific areas for **budget_log_step** which brings better results. 
-The hyperparameter **survival_fraction** should be high and the parameter 
+It looks like there a specific ranges for **budget_log_step** which brings better results. 
+The hyperparameter **survival_fraction** should be high and the parameter. 
 **random_interleave_fraction** should be low for good results.
-High **filter_factor_last** values could be better since there a lot of lines + results in high yval values.
-The parameter **filter_select_per_tournament** should be 1
+High **filter_factor_last** values could be better since there a lot of lines + results in high **yval** values.
+The parameter **filter_select_per_tournament** should be set to 1.
 
-Importance Plot: The paramter **filter_factor_first** and **survival_fraction** and **filter_factor_last.** are most important according to importance plot.
+Importance Plot: The paramter **filter_factor_first** and **survival_fraction** and **filter_factor_last.** are most important according to Importance Plot.
 
-The interesting parameter according to PCP and importance plots should be examined.
+The interesting parameter according to PCP and Importance Plots should be examined.
 
 #### knn1: PDP filter_factor_first
 ```{r PDP1 surrogate_learner knn1 Best}
@@ -633,7 +631,7 @@ plotPartialDependence(knn1BestTask, "random_interleave_fraction")
 
 ### {.unlisted .unnumbered}
 
-In General the parameter **filter_factor_first** seems to produce better results in low areas. But best results are in area under 4. The variable **survival_fraction** should get a vlue over 0.5 (interesting because in the general case lowe values were better!). The hyperparameter **filter_factor_last** and **random_interleave_fraction** doesn't really tell us where the best configurations are. 
+In general the parameter **filter_factor_first** seems to produce better results in low ranges but best results are in configuration ranges under 4. The variable **survival_fraction** should get a vlue over 0.5 (interesting because in the general case lowe values were better!). The hyperparameter **filter_factor_last** and **random_interleave_fraction** doesn't really tell us where the best configurations are. 
 
 ### surrogate_learner knn7 {.unlisted .unnumbered}
 
@@ -644,6 +642,7 @@ knn7BestTaskBest <- TaskRegr$new(id = "knn7Task", backend = knn7Best, target = "
 ```
 
 ### {.tabset .unlisted .unnumbered}
+
 #### PCP knn7 
 ```{r PDP surrogate_learner knn7 Best}
 plotParallelCoordinate(knn7BestTaskBest, labelangle = 10)
@@ -658,9 +657,9 @@ plotImportance(knn7BestTaskBest)
 
 ### {.tabset .unlisted .unnumbered}
 
-PCP: **filter_algorithm** should be "tournament". **filter_factor_first** should be around 4. **random_interleave_random** should be FALSE. **survival_fraction** seems to be a low. **filter_with_max_budget** should be TRUE. **random_interleave_fraction** should be low and **filter_select_per_tournament** should be around 1.
+PCP: **filter_algorithm** should be "tournament". **filter_factor_first** should be around 4. **random_interleave_random** should be "FALSE". **survival_fraction** seems to be a low. The parameter **filter_with_max_budget** should be set to "TRUE". The hyperparameter **random_interleave_fraction** should get a low value and the parameter **filter_select_per_tournament** should get a value around 1.
 
-Importance Plot: The most important parameters are **filter_factor_first**, **filter_factor_last** and **budget_log_step**
+Importance Plot: The most important parameters are **filter_factor_first**, **filter_factor_last** and **budget_log_step**.
 
 
  
@@ -711,7 +710,7 @@ plotPartialDependence(knn7BestTaskBest, "filter_with_max_budget")
 
 ### {.unlisted .unnumbered} 
  
-**Filter_factor_First** should be under 4, **budget_log_step** produces best values over 0.5 but has not a big impact in general. Again, we don't see the perfect range for **filter_factor_last** and **random_interleave_fraction**. And we can not confirm with certainty that "tournament" are always better. **random_interleave_random** should be FALSE. **filter_select_per_tournament** should be over 0.5. **filter_with_max_budget** should be TRUE. 
+The Parameter **filter_factor_first** should be under 4, **budget_log_step** produces best values over 0.5 but has not a big impact in general. Again, we don't see the perfect range for **filter_factor_last** and **random_interleave_fraction**. And we can not confirm with certainty that "tournament" are always better. **random_interleave_random** should be "FALSE". **filter_select_per_tournament** should be over 0.5. **filter_with_max_budget** should be "TRUE". 
  
 
  
@@ -739,7 +738,7 @@ plotImportance(rangerBestTaskBest)
 
 ### {.tabset .unlisted .unnumbered}
 
-PCP: **budget_log_step** should be high. **filter_with_max_budget** should be TRUE. 
+PCP: **budget_log_step** should be high. **filter_with_max_budget** should be "TRUE". 
 
 Importance Plot: The most important parameters are **filter_factor_first**, **filter_with_max_budget** and **budget_log_step**.
 
@@ -758,18 +757,18 @@ plotPartialDependence(rangerBestTaskBest, "budget_log_step")
 plotPartialDependence(rangerBestTaskBest, "filter_with_max_budget")
 ```
 
-A high **budget_log_step** and a low **filter_factor_first** seems produce best performance. For **budget_log_step** a value over -0.5 seems to be good, for **filter_factor_first** a value under 2.5 performs best. It needs to be noticed that only around 45 observations are left and so the intepretation is not that clear. The parameter **filter_with_max_budget** should set to TRUE.
+A high **budget_log_step** and a low **filter_factor_first** seems produce best performance. For **budget_log_step** a value over -0.5 seems to be good, for **filter_factor_first** a value under 2.5 performs best. It needs to be noticed that only around 45 observations are left and so the intepretation is not that clear. The parameter **filter_with_max_budget** should set to "TRUE".
 
 ### budget_log_step {.tabset }
 
-Another important parameter for the bohb **samples** is the **budget_log_step** parameter. Let's have a look on the PDP.
+Another important parameter for the "bohb" **samples** is the **budget_log_step** parameter. Let's have a look on the PDP.
 
 #### PDP full Data
 ```{r PDP budget_log_step}
 plotPartialDependence(bohbTask,"budget_log_step", plotICE = FALSE)
 ```
 
-#### subdivided data set
+#### subdivided dataset
 
 ```{r PDP budget_log_step Best}
 plotPartialDependence(bohbBestTask, features = c("budget_log_step"))
@@ -777,12 +776,12 @@ plotPartialDependence(bohbBestTask, features = c("budget_log_step"))
 
 ### {.unlisted .unnumbered}
 
-In General the value for **budget_log_step** should be over -0.5. A high value seems a good choice in the subdivided data set. However, we could also see before that the parameter varies greatly for the **surrogate_learner** "knn1" and "knn7" and therefore the parameter is assigned a high importance without it being clear how best to set the parameter.
+In General the value for **budget_log_step** should be over -0.5. A high value seems a good choice in the subdivided dataset. However, we could also see before that the parameter varies greatly for the **surrogate_learner** "knn1" and "knn7" and therefore the parameter is assigned a high importance without it being clear how best to set the parameter.
 
 
 ### random_interleave_fraction {.tabset}
 
-Random_interleave_fraction can vary between 0 and 1. This parameter had a high performance in the bohb sample and in the random sample. Slighty more important in random sample. Let check this parameter.
+Random_interleave_fraction can vary between 0 and 1. This parameter had a high performance in the "bohb" **sample** and in the "random" **sample**. Slighty more important in "random" **sample**. Let check this parameter.
 
 #### bohb Subset
 ```{r PDP random_interleave_fraction}
@@ -804,7 +803,7 @@ For the **random_interleave_fraction** and the "bohb" **sample** a good choice i
 plotPartialDependence(bohbBestTask, features = c("random_interleave_fraction"))
 ```
 
-In the upper case, there is no bad area at the edges. 
+In the upper case, there is no bad range at the edges. 
 
 
 ### filter_factor_last {.tabset }
@@ -844,7 +843,7 @@ The parameter **filter_with_max_budget** has a weak effect but should be set to 
 
 ### filter_select_per_tournament
 
-This parameter had barely an effect on the general case but got a little more important in the top 20% configurations. We check the partial dependence and the dependencies with the most important parameters to get more insight. 
+This parameter **filter_select_per_tournament** had barely an effect on the general case but got a little more important in the top 20% configurations. We check the partial dependence and the dependencies with the most important parameters to get more insight. 
 
 ### {.tabset .unlisted .unnumbered}
 
@@ -871,13 +870,12 @@ plotPartialDependence(bohbBestTask, features = c("filter_select_per_tournament",
 
 ### {.unlisted .unnumbered}
 
-The effect is weak and maybe comes from the peaks around 1. The parameter should be probably choosen between 1 or slightly better but the effect shouldn't effect much.
-
+The effect is weak and maybe comes from the peaks around 1. The parameter value should be probably choosen between 1 or slightly better but the effect shouldn't effect much.
 
 
 ### filter_factor_first
 
-Filter_factor_first was a very high ranked parameter in the parmameter importance for top configurations.
+The parameter **filter_factor_first** was a very high ranked parameter in the parmameter Importance Plot for top configurations.
 
 ### {.tabset .unlisted .unnumbered}
 
@@ -905,15 +903,15 @@ plotPartialDependence(bohbBestTask, features = c("filter_factor_first", "budget_
 
 ### {.unlisted .unnumbered}
 
-In General lower values for **filter_factor_first** archieve slightly better performance. But the differences are small and should not lead to a change in considerations made.
+In general lower values for **filter_factor_first** achieve slightly better performance. But the differences are small and should not lead to a change in considerations made.
 
 # Dataset: smashy_super
 
-For the dataset smashy_super the target is yval, which is a logloss performance measurement. Values close to 0 mean good performance. First, of all we want to know which parameter is important in general. 
+For the dataset smashy_super the target is **yval**, which is a logloss performance measurement. Values close to 0 mean good performance. First, of all we want to know which parameter is important in general. 
 
 ## Data Preparation
 
-We need to load packages and subset the data to compare the whole dataset and the dataset with the 20% of configurations with the best outcome. In addition, the data must be manipulated to facilitate the use of the data for summaries and filters.
+We need to subset the data to compare the whole dataset and the dataset with the dataset containing the 20% of configurations with the best outcome. In addition, the data must be manipulated to facilitate the use of the data for summaries and filters.
 
 ### Load Data
 
@@ -945,25 +943,25 @@ superBestTask <- TaskRegr$new(id = "bestTask", backend = superBest, target = "yv
 
 The target parameter **yval** can reach values between -0.3732 and -0.2105. Our goal is to obtain good results, i.e., to find configurations that produce values close to -0.2105.
 
-The "random" **samples** perform better on average than the "bohb" **samples**. For the top 20% configurations, many "bohb" **samples** have been sorted out, but the remaining ones have on average a better performance than the "random" **samples**. In the end, both **samples** can lead to good performance values but since a lot of the remaining **samples** are "random" we will choose this factor. 
+The parameter **sample** perform better on average with the factor "random" than with the "bohb" factor. For the top 20% configurations, many "bohb" **samples** have been sorted out, but the remaining ones have on average a better performance than the "random" **samples**. In the end, both **samples** can lead to good performance values but since a lot of the remaining **samples** are "random" we will choose this factor. 
 
-In general, for the parameter **survival_fraction** lower values perform better than higher values. Both subsets start with a low value and reach their maximum value directly afterwards. For the top configurations, higher values do not seem to be worse so that with good configurations of other paraemter the value of this parameter can be also high. Although not all high values have poor performance, lower values seem to be the right choice since most good configurations have lower values. A value between 0.05 and 0.30 seems to be a good choice for the "knn1" **surrogate_learner**. 
+In general, for the parameter **survival_fraction** lower values perform better than higher values. Both subsets start with a low value and reach their maximum value directly afterwards. For the top configurations, higher values do not seem to be worse so that with matching configurations of other paraemter the value of this parameter can be also high. Although not all high values have poor performance, lower values seem to be the right choice since most good configurations have lower values. A value between 0.05 and 0.30 seems to be a good choice for the factor "knn1" of the **surrogate_learner** parameter. 
 
-The **surrogate_learner** parameter is one of the most important parameters for the whole dataset. After reducing the dataset to the best 20% of configurations, we could see that the parameter lost importance, since the best **surrogate_learner** were mainly "knn1". Even though we found that for all other **Surrogate_learner** the best configuration could achieve a better **yval** than "knn1", it makes sense to choose **knn1** because of better results on average.
+The **surrogate_learner** parameter is one of the most important parameters for the whole dataset. After reducing the dataset to the best 20% of configurations, we could see that the parameter lost importance, since the best **surrogate_learner** had mainly the "knn1" factor. Even though we found that for all other **Surrogate_learner** the best configuration could achieve better **yval** values than with the "knn1" factor, it makes sense to choose **knn1** because of better results on average.
 
-The most important parameter for the best 20% of the configurations was the **random_interleave_fraction** parameter. In this case, the results were unambiguous, so higher values led to better results for both the full data set and the subset. Another early indicator in the analysis was the summary of the full and split data sets. It could be seen that the summary indices for the subset were all higher. All effect tools such as the PDP, PCP, and Heatmap also showed these results. For our purpose, we only take values above 0.5, which is about half.
+The most important parameter for the best 20% of the configurations was the **random_interleave_fraction** parameter. In this case, the results were unambiguous, so higher values led to better results for both the full dataset and the subset. Another early indicator in the analysis was the summary of the full and the divided dataset. It could be seen that the summary indices for the subset were all higher. All effect tools such as the PDP, PCP, and Heatmap also showed these results. For our purpose, we only take values above 0.5, which is about half.
 
-A similar problem as earlier with the **surrogate_learner** occurs with **budget_log_step**. In the full dataset, higher values are better, but in the top 20% of configurations, lower values achieve better **yval** values. But unlike **surrogate_learner**, there are more configurations with good results in the split dataset. Also, it is a very important parameter for the top 20% configurations, so it should not be neglected that good performance values can be achieved with lower **budget_log_step** values. In this case it is better not to limit the parameter. 
+A similar problem as earlier with the **surrogate_learner** occurs with **budget_log_step**. In the full dataset, higher values are better, but in the top 20% of configurations, lower values achieve better **yval** values. But unlike **surrogate_learner**, there are more configurations with good results in the split dataset. Also, it is a very important parameter for the top 20% configurations, so it shouldn't be neglected that good performance values can be achieved with lower **budget_log_step** values. In this case it is better not to limit the parameter. 
 
-In the best parameter configurations in combination with "knn1" values of the **surrogate_learner** parameter, the **filter_factor_first** parameter was the most important parameter. In the full data set, this parameter was not important at all. There is also a difference in the range of good configurations. In the full dataset, values above 6 did not perform well, while in the subdivided dataset, values above 6 produced the best results. Even after subdividing into the best 20% of configurations, the majority of good values were above 4, so it can be said that values above 4 seem to be a good choice for this parameter.
+In the best parameter configurations in combination with "knn1" values of the **surrogate_learner** parameter, the **filter_factor_first** parameter was the most important parameter. In the full dataset, this parameter was not important at all. There is also a difference in the range of good configurations. In the full dataset, values above 6 did not perform well, while in the subdivided dataset, values above 6 produced the best results. Even after subdividing into the best 20% of configurations, the majority of good values were above 4, so it can be said that values above 4 seem to be a good choice for this parameter.
 
-A little more complicated was the interpretation of **filter_factor_last**. **Filter_factor_last** has large fluctuations and different good ranges depending on whether we look at the full or partial data set. Moreover, we can say that although the importance is high due to the large fluctuations, the range of predicted performances is not very large (which actually refutes the importance). In general, however, one can say that the parameter value for **Filter_factor_last** should be between 1.5 and 2.5, or above 5.5. Or at least not between 4 and 5. 
+A little more complicated was the interpretation of **filter_factor_last**. **Filter_factor_last** has large fluctuations and different good ranges depending on whether we look at the full or partial dataset. Moreover, we can say that although the importance is high due to the large fluctuations, the range of predicted performances is not very large (which actually refutes the importance). In general, however, one can say that the parameter value for **Filter_factor_last** should be between 1.5 and 2.5, or above 5.5. Or at least not between 4 and 5. 
 
 A really good parameter to interpret is **filter_with_max_budget**. This parameter is not really important in the full dataset, but for the best configurations in combination with "knn1" one can say that "TRUE" should be the choice. 
 
 **filter_algorithm**, **filter_select_per_tournament** and **random_interleave_random** have barely an effect and therefore do not need to be limited.
 
-### Data constraint to check the results
+### Data Constraint to Check the Results
 
 To verify the proposed parameter configurations, we constrain the dataset and compare the obtained performance with the ranks of the performance of the whole dataset. 
 
@@ -981,30 +979,24 @@ superYvalOriginal <- sort(superSmashy$yval, decreasing = TRUE)
 sort(match(superYval, superYvalOriginal), decreasing = FALSE)
 ```
 
-We can see that many good results were obtained, but not nearly all of the best configurations were found out. This can be explained by the fact that we often imposed constraints to reduce the size of the data set. For example, for some categorical parameters, we always chose one factor even though we knew that other categories could also yield good values. Furthermore, numerical parameters were partly restricted, although it was known that for some very good configurations, very good yval values can also be obtained outside the range. In the end, however, we were able to show that the ranges we restricted lead to almost exclusively above-average or good performance values. 
+We can see that many good results were obtained, but not nearly all of the best configurations were found out. This can be explained by the fact that we often imposed constraints to reduce the size of the dataset. For example, for some categorical parameters, we always chose one factor even though we knew that other categories could also yield good values. Furthermore, numerical parameters were partly restricted, although it was known that for some very good configurations, very good **yval** values can also be obtained outside the range. In the end, however, we were able to show that the ranges we restricted lead to almost exclusively above-average or good performance values. Finally, the metrics are calculated again. The importance of the metrics can be found in the bachelor thesis. 
 
 ```{r}
-#Anzahl an Beobachtungen
-length(superYval)
 #summary
-summary(superYval)
 summary(superSmashy$yval)
 #proportion
 length(superYval)/length(superSmashy$yval)
 #top congifuration
 sum(superYval >= quantile(superSmashy$yval, 0.95))/length(superYval)
 sum(superYval >= quantile(superSmashy$yval, 0.8))/length(superYval)
-sum(superYval >= quantile(superSmashy$yval, 0.7))/length(superYval)
-sum(superYval >= quantile(superSmashy$yval, 0.65))/length(superYval)
+#quantile
+sum(superSmashy$yval<=max(superYval))/length(superSmashy$yval)
+
 ```
 
 ### Visual Overview {.tabset} 
 
 With the implemented PCP it can be visually checked. This can be checked visually with the implemented PCP. For a better overview, the color range is somewhat restricted, since there are very few observations below -0.3. For a better comparison, the presumed good range and the presumed worse configuration range of the parameters are shown once. 
-
-```{r Results superSmashy PCP, eval = FALSE, echo = TRUE}
-plotParallelCoordinate(superTask, labelangle = 10, colbarrange = c(-0.21, -0.3))
-```
 
 #### Limitation to very good configurations
 
@@ -1020,7 +1012,6 @@ knitr::include_graphics("D:/Simon/Desktop/Studium/6. Semester/Bachelorarbeit/Lat
 ```
 
 ### {.unlisted .unnumbered} 
-
 
 ## Overview {.tabset} 
 
@@ -1053,7 +1044,7 @@ plotImportance(task = superBestTask)
 ## {.tabset .unlisted .unnumbered}
 
 
-For the full data set, **surrogate_learner** is the most and **sample** the second most important hyperparameter. After filtering the dataset, both parameters lose much of their importance and have little effect, so **random_interleave_fraction** becomes the most important parameter. Parameters like **filter_algorithm**, **random_interleave_random** and **filter_with_max_budget** have no effect on the full dataset nor on the filtered dataset. 
+For the full dataset, **surrogate_learner** is the most and **sample** the second most important hyperparameter. After filtering the dataset, both parameters lose much of their importance and have little effect, so **random_interleave_fraction** becomes the most important parameter. Parameters like **filter_algorithm**, **random_interleave_random** and **filter_with_max_budget** have no effect on the full dataset nor on the filtered dataset. 
 
 After we have subdivided the data, we also want to look for structural changes in the summary.
 
@@ -1069,7 +1060,7 @@ summary(superBest)
 
 ## {.unlisted .unnumbered}
 
-These summary already explains why the parameter **surrogate_learner** lost most of its importance. Many bohblrn, knn7 and rangers were kicked out. This could mean that these learner perform worse on average than the knn1 learner. For the parameter **filter_with_max_budget** many configurations with FALSE were filtered out in disproportionate numbers. This could means that TRUE values perform better on average. It is also noted that the summary values of **survival_fraction** have decreased and increased for **budget_log_step **, **Filter_factor_first** and **random_interleave_fraction**. Finally, a disproportionate number of "bohb "**samples** also dropped out of the data set. Perhaps this is an indication that "ranom" samples gave better results.
+These summary already explains why the parameter **surrogate_learner** lost most of its importance. Many "bohblrn", "knn7" and "rangers" were kicked out. This could mean that these learner perform worse on average than the "knn1" learner. For the parameter **filter_with_max_budget** many configurations with "FALSE" were filtered out in disproportionate numbers. This could means that "TRUE" values perform better on average. It is also noted that the summary values of **survival_fraction** have decreased and increased for **budget_log_step **, **Filter_factor_first** and **random_interleave_fraction**. Finally, a disproportionate number of "bohb" **samples** also dropped out of the dataset. Perhaps this is an indication that "random" **samples** gave better results.
 
 The hyperparameter will be examined in following sections more precise. 
 
@@ -1077,7 +1068,7 @@ The hyperparameter will be examined in following sections more precise.
 
 ### sample { .tabset} 
 
-As we could find out, "sample" is again an important parameter in the full dataset and can take the values "bohb" or "random". This parameter should have the right value for good performance. Therefore, let us consider the effects of the parameter in a partial dependence plot. We also check if the effect applies to all parameters. We can use a heatmap to get a quick overview of interactions. Values close to 1 have barealy an effect on the outcome. 
+As we could find out, **sample** is again an important parameter in the full dataset and can take the values "bohb" or "random". This parameter should have the right value for good performance. Therefore, let us consider the effects of the parameter in a Partial Dependence Plot. We also check if the effect applies to all parameters. We can use a Heatmap to get a quick overview of interactions. Values close to 1 have barealy an effect on the outcome. 
 
 
 #### PDP 
@@ -1102,17 +1093,17 @@ nrows = 5,shareX = TRUE)
 ```
 ### {.unlisted .unnumbered}
 
-In the PDP, it can be seen that the target values for "random" samples lead to better results on average than for "bohb" samples. In the heatmaps, it can be seen that the predicted performances may be better when **filter_with_max_budget** is set to "TRUE", **random_interleave_fraction** is given a high value and **survival_fraction** is given a low value. As suspected since the Summary, the **surrogate_learner** knn1 seems to give better results. This means that knn1 gives the best results on average. 
+In the PDP, it can be seen that the target values for "random" **samples** lead to better results on average than for "bohb" **samples**. In the heatmaps, it can be seen that the predicted performances may be better when **filter_with_max_budget** is set to "TRUE", **random_interleave_fraction** is given a high value and **survival_fraction** is given a low value. As suspected since the summary, the factor "knn1" of the **surrogate_learner** parameter give best results on average. 
 
 #### Top 20% {.unlisted .unnumbered}
 
-we can split the data according to the best 20% yval values of the dataset and check if the outcome of a PDP is different. 
+we can split the data according to the best 20% **yval** values of the dataset and check if the outcome of a PDP is different. 
 
 ```{r PDP2 sample superSmashy}
 plotPartialDependence(superBestTask, features = c("sample"), rug = TRUE, plotICE = TRUE)
 ```
 
-A lot of "bohb" **samples** were sorted out, but the remaining ones have on average a better performance than the "random" **samples**. Since both subsets seem important for further analysis, we split the entire dataset. Furthermore, we assume differences between "random" and "bohb" **samples**, since the parameter has lost much of its importance after filtering. Therefore we split the data set into "bohb" and "random" **samples**.
+A lot of "bohb" **samples** were sorted out, but the remaining ones have on average a better performance than the "random" **samples**. Since both subsets seem important for further analysis, we split the entire dataset. Furthermore, we assume differences between "random" and "bohb" **samples**, since the parameter has lost much of its importance after filtering. Therefore we split the dataset into "bohb" and "random" **samples**.
 
 ```{r Split superSmashy}
 superRandom <- superSmashy[superSmashy$sample == "random",]
@@ -1122,7 +1113,7 @@ superRandomTask <- TaskRegr$new(id = "task_superRandom", backend = superRandom, 
 superBohbTask <- TaskRegr$new(id = "task_superBohb", backend = superBohb, target = "yval")
 ```
 
-Let's check if there are differences in importance for the parameters in the random subset and the Bohb subset.
+Let's check if there are differences in importance for the parameters in the "random" subset and the "bohb" subset.
 
 ### {.tabset .unlisted .unnumbered}
 #### Subset bohb
@@ -1137,14 +1128,14 @@ plotImportance(task = superRandomTask)
 ### {.unlisted .unnumbered}
 
 
-The hyperparameter **surrogate_learner** and **random_interleave_fraction** are still the most important parameter for both partial datasets. In fact, the importance didn't change a lot. 
+The hyperparameter **surrogate_learner** and **random_interleave_fraction** are still the most important parameter for both constrained datasets. In fact, the importance didn't change a lot. 
 
-There is little difference between the two **samples** in the full data set. We did find that the majority of the good results were obtained with the "random" **samples**, but for further analysis we will look at both the "random" subset and the "bohb" subset. 
+There is little difference between the two factors of the **sample** parameter in the full dataset. We did find that the majority of the good results were obtained with the "random" **samples**, but for further analysis we will look at both the "random" subset and the "bohb" subset. 
 
 
 ### survival_fraction {.tabset} 
 
-The **survival rate** parameter was a moderately important parameter for both samples of the entire data set, but we assumed based on the summary that low values may lead to better performance. This parameter can take values between 0.00007 and 0.9998. Let us explore this assumption with a PDP. 
+The **survival rate** parameter was a moderately important parameter for both **samples** of the entire dataset, but we assumed based on the summary that low values may lead to better performance. This parameter can take values between 0.00007 and 0.9998. Let us explore this assumption with a PDP. 
 
 #### Subset bohb
 ```{r PDP survival_fraction superSmashy}
@@ -1158,13 +1149,13 @@ plotPartialDependence(superRandomTask, features = c("survival_fraction"), rug = 
 
 ### {.unlisted .unnumbered} 
 
-In general, lower values perform better than higher values. Both subsets start with a low value and reach their maximum value directly afterwards. This means that the value should probably be low, but not minimal. For both subsets, the best range seems to be between 0.05 and 0.25. While the "random" samples are almost monotonly decreasing the "bohb" samples has another height between 0.5 and 0.75. 
+In general, lower values perform better than higher values. Both subsets start with a low value and reach their maximum value directly afterwards. This means that the value should probably be low, but not minimal. For both subsets, the best range seems to be between 0.05 and 0.25. While the "random" **samples** are almost monotonly decreasing the "bohb" **samples** has another peak between 0.5 and 0.75. 
 
 #### Top 20% {.unlisted .unnumbered}
 
 ### {.tabset .unlisted .unnumbered} 
 
-A possibility to find analyze the structure is to filter the data again. For this we can split the data according to the best 20% yval values of the bohb samples. We can review "bohb" **samples** with ICE-Curves. ICE-Curvers can show the heterogeneous relationship between the parameter **survival_fraction** and the performance parameter **yval** created by interactions. 
+A possibility to analyze the structure is to filter the dataset again. For this we can split the data according to the best 20% **yval** values of the "bohb" **samples**. We can review "bohb" **samples** with ICE-Curves. ICE-Curvers can show the heterogeneous relationship between the parameter **survival_fraction** and the performance parameter **yval** created by interactions. 
 
 ```{r Split into bohbBestTask and randomBestTask superSmashy}
 superBohbBest <- superBohb[superBohb$yval >= quantile(superBohb$yval, 0.8),]
@@ -1186,12 +1177,12 @@ plotPartialDependence(superRandomBestTask, features = c("survival_fraction"), ru
 
 ### {.unlisted .unnumbered}
 
-In this case, higher values do not seem to be worse. This is surprising, since in the general case low values were more important. It could mean that with good configurations of other parameters, the **survival_fraction** parameter even gives better results when a high value is chosen. This could also explain the increase in the range between 0.5 and 0.75 for the "bohb" sample. Looking at the rug, we see that most configurations were made below 0.5 and the fewest configurations were made above 0.75. Because of the few configurations with high values, the effect of good performances in this range is less strong. In the range between 0.5 and 0.75, there are more configurations, which therefore have a greater impact on the average curve. Although not all high values have poor performance, lower values seem to be the right choice since most good configurations have lower values. 
+In this case, higher values do not seem to be worse. This is surprising, since in the general case low values were more important. It could mean that with good configurations of other parameters, the **survival_fraction** parameter even gives better results when a high value is chosen. This could also explain the increase in the range between 0.5 and 0.75 for the "bohb" **sample**. Looking at the rug, we see that most configurations were made below 0.5 and the fewest configurations were made above 0.75. Because of the few configurations with high values, the effect of good performances in this range is less strong. In the range between 0.5 and 0.75, there are more configurations, which therefore have a greater impact on the average curve. Although not all high values have poor performance, lower values seem to be the right choice since most good configurations have lower values. 
 
 
 ### surrogate_learner {.tabset}
 
-A very important parameter for the bohb subset was the **surrogate_learner**. We can already assume that "knn1" is the most important **surrogate_learner**, since many other **surrogate_learner** were filtered out in the top 20% dataset. But let's check this with a PDP. 
+A very important parameter for the "bohb" subset was the **surrogate_learner**. We can already assume that "knn1" is the most important **surrogate_learner**, since many other **surrogate_learner** were filtered out in the top 20% dataset. But let's check this with a PDP. 
 
 #### Subset bohb
 ```{r PDP surrogate_learner superSmashy}
@@ -1204,7 +1195,7 @@ plotPartialDependence(superRandomTask, features = c("surrogate_learner"), rug = 
 
 ### {.tabset .unlisted .unnumbered}
 
-In both subsets, knn1 is actually the best choice based on the PDP. There does not seem to be much difference in the other parameters. For a more detailed analysis, we should split the data into the individual **surrogate learners** and see if there are differences in the importance of the other parameters. Although it would be interesting to analyze the learners for both **samples** separately, we focus on the whole dataset to make it less complicated and because the importance of the subsets does not differ much. 
+In both subsets, "knn1" is actually the best choice based on the PDP. There does not seem to be much difference in the other parameters. For a more detailed analysis, we should split the data into the individual **surrogate learners** and see if there are differences in the importance of the other parameters. Although it would be interesting to analyze the learners for both **samples** separately, we focus on the whole dataset to make it less complicated and because the importance of the subsets does not differ much. 
 
 ```{r Subsets surrogate_learner superSmashy}
 superKnn1 <- superSmashy[superSmashy$surrogate_learner == "knn1",] 
@@ -1240,14 +1231,12 @@ plotImportance(superRangerTask)
 
 ### {.unlisted .unnumbered}
 
-The parameter **sample**, **random_interleave_fraction** are most important for "knn1", "knn7" and "ranger." For the "bohblrn" the parameter **survival_fraction** is more important than the parameter **random_interleave_fraction**. The parameter **filter_with_max_budget** has barely effect for all parameter but the knn1 learner. These are the parameters we should check more closely
-
-
+The parameter **sample**, **random_interleave_fraction** are most important for "knn1", "knn7" and "ranger." For the "bohblrn" the parameter **survival_fraction** is more important than the parameter **random_interleave_fraction**. The parameter **filter_with_max_budget** has barely effect for all parameter but the "knn1" learner. These are the parameters we should check more closely.
 
 
 ### {.tabset .unlisted .unnumbered}
 
-Most important Parameter for nearly all surrogate_learner is "sample". 
+Most important Parameter for nearly all **surrogate_learner** is the **sample** parameter. 
 
 #### knn1: sample 
 ```{r PDP3 surrogate_learner superSmashy}
@@ -1271,7 +1260,7 @@ plotPartialDependence(superRangerTask, "sample", rug = FALSE)
 
 ### {.tabset .unlisted .unnumbered}
 
-We already knew that random is better on average but know we also know that this assumption is true for all **surrogate_learner**
+We already knew that "random" is better on average but know we also know that this assumption is true for all **surrogate_learner**
 
 #### knn1: random_interleave_fraction 
 ```{r PDP7 surrogate_learner superSmashy}
@@ -1354,7 +1343,7 @@ When we compared the importance of **surrogate_learner**, we found that the **fi
 
 #### Top 20% {.unlisted .unnumbered}
 
-when we compared the summary of the full dataset with the top 20% configurations we could see that both, random and bohb samples were left. We also could see that mostly knn1 learner were left. To see if it is still possible to gain good results with these learner lets have a look on max values for all the learners. 
+when we compared the summary of the full dataset with the top 20% configurations we could see that both, "random" and "bohb" **samples** were left. We also could see that mostly knn1 learner were left. To see if it is still possible to gain good results with these learner lets have a look on max values for all the learners. 
 
 ```{r Aggregate Best superSmashy}
 summary(superBest$surrogate_learner)
@@ -1411,7 +1400,7 @@ In the PDP we can see that filter_factor_first should be high and fitler_factor_
 
 ### budget_log_step {.tabset }
 
-Another very important parameter for random Subsets and for the filtered dataset is the **budget_log_step** parameter. First, let us investigate the parameter with a PDP for the full dataset. 
+Another very important parameter for "random" Subsets and for the filtered dataset is the **budget_log_step** parameter. First, let us investigate the parameter with a PDP for the full dataset. 
 
 #### Subset bohb
 ```{r PDP budget_log_step superSmashy}
@@ -1425,7 +1414,7 @@ plotPartialDependence(superRandomTask, features = c("budget_log_step"), rug = FA
 
 ### {.unlisted .unnumbered}
 
-For the random Subset higher values produces better outcomes. For the superBohbTask there are two peaks around -0.5 and 0.5. To find reasons for the two peaks lets focus on the top 20% again.
+For the "random" Subset higher values produces better outcomes. For the superBohbTask there are two peaks around -0.5 and 0.5. To find reasons for the two peaks lets focus on the top 20% again.
 
 #### top 20 % {.unlisted .unnumbered}
 
@@ -1460,7 +1449,7 @@ In the PCP we can see that good values are often obtained with a "knn1" learner.
 
 ### {.tabset .unlisted .unnumbered}
 
-Another possibiliy is to look on a two dimensional partial dependence plot. We compare **budget_log_step** with the 3 parameter we found in the PCP. 
+Another possibiliy is to look on a two dimensional Partial Dependence Plot. We compare **budget_log_step** with the 3 parameter we found in the PCP. 
 
 #### survival_fraction
 ```{r PDP5 budget_log_step superSmashy}
@@ -1480,7 +1469,7 @@ plotPartialDependence(superRandomTask, features = c("surrogate_learner", "random
 
 ### {.unlisted .unnumbered}
 
-We can see that high values have less poor performance when other parameters are also poorly configured. Conversely, it is also possible to achieve good values when **budget_log_step** is low and the other parameters are well configured. We also can say that the factor "knn1" of the parametr **surrogate_learner** archieve best performance on average.
+We can see that high values have less poor performance when other parameters are also poorly configured. Conversely, it is also possible to achieve good values when **budget_log_step** is low and the other parameters are well configured. We also can say that the factor "knn1" of the parametr **surrogate_learner** achieve best performance on average.
 
 
 
@@ -1501,7 +1490,7 @@ plotPartialDependence(superRandomTask, features = c("random_interleave_fraction"
 
 ### {.unlisted .unnumbered}
 A good choice for the parameter configuration for **random_interleave_fraction** of the "bohb" **samples** is a high value. A good range seems to be between 0.75 and 0.95,
-For the random **samples** a high value between 0.5 and 0.75 seems to produce best performances. 
+For the "random" **samples** a high value between 0.5 and 0.75 seems to produce best performances. 
 
 #### top 20% {.unlisted .unnumbered}
 
@@ -1549,7 +1538,7 @@ plotPartialDependence(superRandomBestTask, features = c("filter_factor_last"), r
 
 ### {.unlisted .unnumbered}
 
-**Filter_factor_last** has much fluctuation and therefore we choose a higher gridsize. When the fluctuations raise the importance raises as well even the range of predicted performances is not really big. the parameter value for **Filter_factor_last** should be between 1.5 and 2.5 or For bohb samples over 5.5 and for random samples between 5 and 5.5.  
+**Filter_factor_last** has much fluctuation and therefore we choose a higher gridsize. When the fluctuations raise the importance raises as well even the range of predicted performances is not really big. the parameter value for **Filter_factor_last** should be between 1.5 and 2.5 or For "bohb" **samples** over 5.5 and for "random" **samples** between 5 and 5.5.  
 
 ### filter_with_max_budget {.tabset }
 
@@ -1578,34 +1567,6 @@ plotPartialDependence(superRandomTask, features = c("filter_with_max_budget"), r
 
 The parameter **filter_with_max_budget** has a weak effect but should be set to "TRUE".
 
-### filter_select_per_tournament
-
-This parameter had barely an effect on the general case but got a little more important in the top 20% configurations. We check the partial dependence and the dependencies with the most important parameters to get more insight. 
-
-### {.tabset .unlisted .unnumbered}
-#### Bohb: full dataset
-```{r PDP filter_select_per_tournament superSmashy}
-plotPartialDependence(superBohbTask, features = c("filter_select_per_tournament"), rug = FALSE, plotICE = FALSE)
-```
-
-#### Bohb: subdivided dataset
-```{r PDP2 filter_select_per_tournament superSmashy}
-plotPartialDependence(superBohbBestTask, features = c("filter_select_per_tournament"), rug = FALSE, plotICE = FALSE)
-```
-
-#### random: full dataset
-```{r PDP3 filter_select_per_tournament superSmashy}
-plotPartialDependence(superRandomTask, features = c("filter_select_per_tournament"), rug = FALSE, plotICE = FALSE)
-```
-
-#### random: subdivided dataset
-```{r PDP4 filter_select_per_tournament superSmashy}
-plotPartialDependence(superRandomBestTask, features = c("filter_select_per_tournament"), rug = FALSE, plotICE = FALSE)
-```
-
-### {.unlisted .unnumbered}
-
-The effect is weak and maybe comes from the peaks around 1 - 1.3. The parameter should be probably choosen between 1 or slightly better but the effect shouldn't effect much.
 
 ### filter_factor_first
 
@@ -1634,28 +1595,28 @@ plotPartialDependence(superRandomBestTask, features = c("filter_factor_first"), 
 
 ### {.unlisted .unnumbered}
 
-The parameter **filter_factor_first** shows interesting differences between the general and the subdivided case. While in the general cases values above 6 are decreasing a lot in the subset these values show best performances. Since in the subset the majority of good cases are in this area it seems to be a good choice to pick a value over 6.
+The parameter **filter_factor_first** shows interesting differences between the general and the subdivided case. While in the general cases values above 6 are decreasing a lot in the subset these values show best performances. Since in the subset the majority of good cases are in this range it seems to be a good choice to pick a value over 6.
 
 
 # Comparison of the two datasets
 
-Let us compare the results of the parameters from the two data sets
+Let us compare the results of the parameters from the two datasets
 
 sample: The **sample** parameter is very important for both datasets. For the lcbench dataset it should be "bohb" in any case and for the super dataset you can get good performances with "bohb" as well as with "random".
 
 survival_fraction: The parametr **survival_fraction** should be chosen according to the selected **surrogate_learner** in the lcbench dataset. This distinction was made because good values could be achieved with all Learners. In particular, for the knn1 learner, which was also chosen for the super_dataset, all values should be considered, since values below 0.5 are considered to be the better results on average for the whole dataset, but for the best configurations it hardly matters and even higher values seem to be better. For the super dataset a low value between 0 and 0.3 seems is a good choice in general.
 
-surrogate_learner: In the lcbench data set, the **surrogate_learner** parameter was not particularly important, but influenced other parameters depending on the factor selected. Basically, "knn1" and "knn7" achieved the best performance values on average, but when considering only the best configurations, the **surrogate_learner** "bohb" achieved the best performance values on average. For the super dataset, the parameter was very important and achieved most of the good results with "knn1". This factor should basically be the choice. However, it should also be noted that good values could be achieved with all **surrogate_learner**.   
+surrogate_learner: In the lcbench dataset, the **surrogate_learner** parameter was not particularly important, but influenced other parameters depending on the factor selected. Basically, "knn1" and "knn7" achieved the best performance values on average, but when considering only the best configurations, the **surrogate_learner** "bohb" achieved the best performance values on average. For the super dataset, the parameter was very important and achieved most of the good results with "knn1". This factor should basically be the choice. However, it should also be noted that good values could be achieved with all **surrogate_learner**.   
 
-A very important parameter for both data sets was **random_interleave_fraction**. For the lcbench data set the configuration depended on the surrogate_learner again while for the super dataset higher values led to better results. 
+A very important parameter for both datasets was **random_interleave_fraction**. For the lcbench dataset the configuration depended on the surrogate_learner again while for the super dataset higher values led to better results. 
 
-A very important parameter for the bohb samples in the lcbench data set is the **budget_log_step** parameter. 
+A very important parameter for the "bohb" **samples** in the lcbench dataset is the **budget_log_step** parameter. 
 This parameter should be set according to the surrogate_learner again but for "knn1" a value between -0.5 and 0.5 should be all right. It needs to be mentioned that this parameter had repeated dips for knn1 and knn7 so it is hard to choose the right value for this parameter. For the super dataset higher values are better, but in the top 20% of configurations, lower values achieve better **yval** values. Because of this problematic we chose not to limit this parameter.
 
 For the lcbench dataset, the **filter_factor_first** parameter is the most important parameter for the best 20%. In general, it can be said that values below 4 provide the best performance. An exception is the bohblrn surrogate_learner. Here no restriction should take place. For the super dataset, the parameter for the best parameter configurations in combination with "knn1" values of the **surrogate_learner** parameter was the most important parameter. For this dataset, values above 4 seem to be a good choice for this parameter.
 
 The **filter_factor_last** parameter was not really important for the lcbench dataset. The effect is small and generally should not be used to subdivide the dataset. For the super dataset, the **filter_factor_last** parameter was very important for the top configurations, but this was due to high fluctuations. It was difficult to restrict the parameter, but values between 4 and 5 should be assumed.
 
-Easy to set is the **filter_with_max_budget**. This parameter should always be TRUE for both data sets. 
+Easy to set is the **filter_with_max_budget**. This parameter should always be "TRUE" for both datasets. 
 
 Also the parameter **filter_algorithm**, **filter_select_per_tournament** and **random_interleave_random** have barely an effect and therefore do not need to be limited.

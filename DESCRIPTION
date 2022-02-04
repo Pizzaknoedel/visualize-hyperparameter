@@ -1,9 +1,9 @@
 Package: VisHyp
-Title: Visualizing Hyperparamer Performance Dependencies in R
+Title: Visualizing Hyperparamer Performance Dependencies 
 Version: 0.1.1
 Authors@R: 
     person("Simon", "Pradel", , "simon.pradel@gmx.de", role = c("aut", "cre"))
-Description: Visualizing Hyperparamer Performance Dependencies.
+Description: The goal of the "VisHyp" package is to visualize hyperparameter performance dependencies in order to gain insight into which hyperparameter configurations deliver the best performance. For this purpose, the following four plots were implemented: The Partical Coordinate Plot (PCP), the Partial Dependence Plot (PDP), the Importance Plot and the Heatmap. 
 License: LGPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
