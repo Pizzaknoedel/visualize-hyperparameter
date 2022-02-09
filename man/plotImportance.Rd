@@ -11,21 +11,23 @@ plotImportance(task, learner = NULL, loss = "mae", title = TRUE)
 A task for which the plot should be generated.}
 
 \item{learner}{\link[mlr3:Learner]{mlr3::Learner} object \cr
-A Learner for which the plot should be generated.
-If NUll, then a Random Forest for regression or classification will be used. Default is NULL.}
+A learner for which the plot should be generated.
+If NULL, a random forest for regression or classification will be used. The default is "regr.ranger" for regression
+tasks and "classif.ranger" for classification tasks.}
 
 \item{loss}{(\code{character(1)} \cr
-The loss function to be used. It can be chosen between "ce", "f1", "logLoss", "mae", "mse", "rmse", "mape",
-"mdae", "msle", "percent_bias", "rae", "rmse", "rmsle", "rse", "rrse", "smape". Default is "mae".}
+The loss function to be used. It can be chosen between "ce", "f1", "mae", "mse", "rmse", "mape",
+"mdae", "msle", "percent_bias", "rae", "rmse", "rmsle", "rse", "rrse", "smape". The default is "mae" for a Regression
+task. For for a classification task only "ce" is available.}
 
 \item{title}{(\code{logical}) \cr
-If TRUE, then a title will be plotted. Default is TRUE.}
+If TRUE, the title will be plotted. The default is TRUE.}
 }
 \value{
 A \link{plotly} object.
 }
 \description{
-Visualize an Importance Plot from a \link[mlr3:Task]{mlr3::Task} object and a \link[mlr3:Learner]{mlr3::Learner}
+Visualization of an importance plot from a \link[mlr3:Task]{mlr3::Task} object and a \link[mlr3:Learner]{mlr3::Learner}.
 }
 \examples{
 library(mlr3)

@@ -7,17 +7,9 @@ DataUI <- function(id, label = "data") {
     sidebarPanel(
       id = "data_panel",  width = 3,
 
-
-                      # selectInput("foo", "Choose", width = '20%',
-                      #             multiple = F, selected = "red1",
-                      #             choices = list("red 2" = c("red1", "red2"),
-                      #                            green = c("green1")),
-                      #             selectize = T),
-
       selectInput(inputId = ns("dataSelect"), label = h5("Select Data"),
                    choices = list("Upload Data", "Test Data" = c("glmnet_ela", "smashy_super")),
                    selected = "glmnet_ela", multiple = FALSE, selectize = T),
-
       conditionalPanel(
         condition = "input.dataSelect == 'Upload Data'",
         ns = ns,
@@ -25,7 +17,6 @@ DataUI <- function(id, label = "data") {
         inputId = ns("dataType"), label = h5("Type"), choices = c("csv", "txt", "xlsx", "RData", "rds"),
         selected = "csv"
         ),
-      # To be expanded, if more file formats are accepted
       conditionalPanel(
         condition = "input.dataType == 'csv' || input.dataType == 'txt'",
         ns = ns,

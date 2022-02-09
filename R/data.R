@@ -1,7 +1,7 @@
 #' logloss Performance for two hyperparameter.
 #'
-#' A dataset containing the `logloss` performance meassure and the two hyperparameter `s` and `alpha`.
-#' The dataset is from the glmnet package.
+#' A dataset containing the `logloss` performance measure and the two hyperparameters `s` and `alpha`.
+#' The dataset is from the [glmnet]{https://github.com/cran/glmnet} package.
 #'
 #' @format \code{glmnet_ela} is a data frame with 49 rows and 3 variables:
 #' \describe{
@@ -11,9 +11,9 @@
 
 "glmnet_ela"
 
-#' logloss Performance for two hyperparameter.
+#' logloss Performance for two hyperparameters.
 #'
-#' A dataset containing the `yval` performance meassure and 11 hyperparameter.
+#' A dataset containing the `yval` performance measure and 11 hyperparameters.
 #' The dataset is from Moosbauer, Julia, et al. "Automated Benchmark-Driven Design and Explanation of Hyperparameter Optimizers."
 #' arXiv preprint arXiv:2111.14756 (2021).
 #'

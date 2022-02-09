@@ -7,11 +7,12 @@
 plotHeatmap(
   task,
   features = NULL,
-  fun = mean,
+  fun = NULL,
   gridsize = 20,
   scatterplot = FALSE,
   rug = TRUE,
-  title = TRUE
+  title = TRUE,
+  numericNA = "Max"
 )
 }
 \arguments{
@@ -19,28 +20,33 @@ plotHeatmap(
 A task for which the plot should be generated.}
 
 \item{features}{(\code{character(2)}) \cr
-Names of two columns to plot. If NULL, then the first two feature columns will be plotted. Default is NULL.}
+The names of the two columns to be plotted. If NULL, the first two feature columns will be plotted. The default is NULL.}
 
 \item{fun}{(\code{function}) \cr
-A summary function used in the rectangles of the grid. The default summary function is \link{mean}.}
+A summary function used in the rectangles of the grid. The default is \link{mean} for a regression task and
+majority vote for a classification task.}
 
 \item{gridsize}{(\code{numeric(1)}) \cr
-The number of rectangles per axis. Default value is 20.}
+The number of rectangles per axis. The default value is 20.}
 
 \item{scatterplot}{(\code{logical}) \cr
-If TRUE, then a scatterplot will be plotted. Default is FALSE.}
+If TRUE, a scatterplot will be plotted. The default is FALSE.}
 
 \item{rug}{(\code{logical}) \cr
-If TRUE, then a rug will be plotted. Default is TRUE.}
+If TRUE, a rug will be plotted. The default is TRUE.}
 
 \item{title}{(\code{logical}) \cr
-If TRUE, then a title will be plotted. Default is TRUE.}
+If TRUE, the title will be plotted. The default is TRUE.}
+
+\item{numericNA}{(\code{character(1)} \cr
+If "Max", the NA values of the column are displayed as maximum value. If "Min", the NA values are displayed as
+minimum value. The default is "Max".}
 }
 \value{
 A \link{plotly} object.
 }
 \description{
-Visualize a heatmap from a \link[mlr3:Task]{mlr3::Task} object.
+Visualization of a heatmap from a \link[mlr3:Task]{mlr3::Task} object.
 }
 \examples{
 library(mlr3)

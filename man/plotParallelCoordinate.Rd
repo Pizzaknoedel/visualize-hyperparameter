@@ -24,46 +24,47 @@ plotParallelCoordinate(
 A task for which the plot should be generated.}
 
 \item{features}{(\code{character}) \cr
-Names of columns to plot. If NULL, then each column will be plotted. Default is NULL.}
+The names of columns to be plotted. If NULL, each column will be plotted. The default is NULL.}
 
 \item{labelside}{(\code{character(1)} \cr
-The side of the labels for the scales. It can be chosen between "Top" and "Bottom". Default is "Top".}
+The positions of the labels for the scales. It can be chosen between "Top" and "Bottom". The default is "Top".}
 
 \item{labelangle}{(\code{numeric(1)}) \cr
-The angle for the labels. Default is 0.}
+The angle of the labels. The default is 0.}
 
 \item{colbarrange}{(\code{numeric(2)}) \cr
 A vector with two numeric values. Its distance specifies the range of the color bar for the labeled target.
-If NULL, then the color bar between minimum and maximum of the target variable is displayed. Default is NULL.}
+If NULL, the color bar is displayed. The value range of the color bar starts at the minimum and ends at the
+maximum of the target variable. The default is NULL.}
 
 \item{constrainrange}{(\code{numeric(2)}) \cr
-A vector with two numeric values between 0 and 1. The vector restrict each column to the values of a range
-for which they are within the quantile of the target variable. If NULL, then no restriction is plotted. Default is NULL.}
+A vector with two numeric values between 0 and 1. The vector restricts each column to a range of values that lies
+within the quantile of the target variable. If NULL, no restriction is plotted. The default is NULL.}
 
 \item{labeltarget}{(\code{logical}) \cr
-If TRUE, the target will be labeled. Default is TRUE.}
+If TRUE, the target will be labeled. The default is TRUE.}
 
 \item{colbarreverse}{(\code{logical}) \cr
-If TRUE, The colorbar will be reversed. Default is FALSE.}
+If TRUE, the colorbar will be reversed. The default is FALSE.}
 
 \item{autosort}{(\code{logical}) \cr
-If True, The columns will be ordered. Default is TRUE.}
+If TRUE, the columns will be ordered. The default is TRUE.}
 
 \item{numericNA}{(\code{character(1)} \cr
-If "Max", the NA values of the column are displayed as maximum value. If "Min", then the NA values are displayed as minimum value.
-Default is "Max".}
+If "Max", the NA values of the column are displayed as maximum value. If "Min", the NA values are displayed as minimum value.
+The default is "Max".}
 
 \item{title}{(\code{logical}) \cr
-If TRUE, then a title will be plotted. Default is FALSE}
+If TRUE, a title will be plotted. The default is FALSE.}
 
 \item{titleheight}{(\code{numeric(1)}) \cr
-The height for the title Default is 0.95.}
+The height of the title. The default is 0.95.}
 }
 \value{
 A \link{plotly} object.
 }
 \description{
-Visualize a Parallel Coordinate Plot from a \link[mlr3:Task]{mlr3::Task} object.
+Visualization of a parallel coordinate plot from a \link[mlr3:Task]{mlr3::Task} object.
 }
 \examples{
 library(mlr3)

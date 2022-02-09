@@ -7,9 +7,9 @@ DataServer <- function(id) {
 
 data <- reactiveValues(originalData = NULL, manipulateData = NULL, subsetData = NULL, selectedCol = NULL, droppedCol = NULL, target = NULL, taskRdy = FALSE)
 
-# originalData: Data without manipulation (important to reset the data if needed)
-# manipulateData: Data with manipulations but without filters (This is important that the filter works in DT)
-# subsetData: Data with manipulations and with filters (Final Data for the task)
+# originalData: data without manipulation (important to reset the data if needed)
+# manipulateData: data with manipulations but without filters (this is important that the filter works in DT)
+# subsetData: data with manipulations and with filters (final dataset for the task)
 # selectCol: is a NUMBER which identify the column in the df
 # droppedCol: is a STRING for the names of the columns
 
@@ -17,7 +17,7 @@ data <- reactiveValues(originalData = NULL, manipulateData = NULL, subsetData = 
 ##################################################### UI #########################################################
 ##################################################################################################################
 
-#UI for Data Manipulation
+# UI for data manipulation
 output$dataManipulation <- renderUI({
 
   ns <- session$ns
@@ -49,7 +49,7 @@ output$dataManipulation <- renderUI({
 })
 
 
-#UI-OUTPUT DT
+# UI-OUTPUT DT
 output$dataView <- renderDataTable({
 
   req(!is.null(data$manipulateData))
@@ -70,12 +70,12 @@ output$dataView <- renderDataTable({
 ######################################### observe and observerEvent ##############################################
 ##################################################################################################################
 
-# current Task
+# current target of the task
 observeEvent(input$target, {
   data$target <- input$target
 })
 
-# data upload or selection
+# possibility to upload data or to select a test dataset
 observe({
   if ( input$dataSelect != "Upload Data") {
     data$originalData <- get(input$dataSelect)
@@ -120,18 +120,18 @@ observe({
 })
 
 
-#observe selectColumn selectizeInput
+# observe selectColumn for furhter manipulations
 observeEvent(input$selectColumn, {
   data$selectedCol <- which(names(data$manipulateData) %in% input$selectColumn)
 })
 
-#observe clicks in DT (mark column which is selected)
+# observe selected columns in DT (mark column which is selected)
 observeEvent(input$dataView_columns_selected, {
   data$selectedCol <- input$dataView_columns_selected + 1 #input$dataView_cell_clicked$col + 1
   updateSelectizeInput(session, "selectColumn", choices = names(data$manipulateData), selected = names(data$manipulateData)[data$selectedCol])
 })
 
-#observe the dropcolumn button
+# observe the dropColumn button
 observeEvent(input$Drop_column, {
 
 if(ncol(data$manipulateData)-length(data$selectedCol) >= 2)  {
@@ -144,13 +144,13 @@ if(ncol(data$manipulateData)-length(data$selectedCol) >= 2)  {
 }
 })
 
-# observe resetData button
+# observe the resetData button
 observeEvent(input$resetData, {
  data$manipulateData <- data$originalData
  data$subsetData <- data$originalData
 })
 
-#observe rename button
+# observe the renameColumn button
 observeEvent(input$column_rename, {
 
   req(data$manipulateData)
@@ -179,17 +179,16 @@ observeEvent(input$column_rename, {
 
 })
 
-#watch for filters
+# watch for filters to update the dataset for the task
 observeEvent(input$dataView_rows_all, {
   req(input$dataView_rows_all)
-  #index of selected rows
+  # index of selected rows
   index_data <- input$dataView_rows_all
-  #subsetData
   data$subsetData <- as.data.frame(data$manipulateData[index_data,])
 })
 
 
-#if a new data set is chosen the data needs to be reseted
+# if a new data set is chosen the data needs to be reseted
 observeEvent(input$dataSelect, {
     data$originalData <- NULL
     data$subsetData <- NULL
@@ -198,7 +197,7 @@ observeEvent(input$dataSelect, {
     data$taskRdy <- FALSE
   })
 
-#Warunung, falls Spaltennamen öfters vorkommen
+# prepare data for the task
 observeEvent(data$subsetData, {
 if (any(duplicated(names(data$subsetData)))){
   shinyalert(title = "Duplicated Columns",

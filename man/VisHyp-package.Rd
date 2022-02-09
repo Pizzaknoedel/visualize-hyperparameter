@@ -4,9 +4,9 @@
 \name{VisHyp-package}
 \alias{VisHyp}
 \alias{VisHyp-package}
-\title{VisHyp: Visualize Hyperparameter Performance Dependencies}
+\title{VisHyp: Visualization of Hyperparameter Performance Dependencies}
 \description{
-The following four different visualization options are provided in this package, which are used to visualize hyperparameter performance dependencies.
+The following four visualization methods are provided with this package to visualize hyperparameter performance dependencies.
 \itemize{
 \item Heatmap: \link{plotHeatmap}
 \item Partial Dependence Plot: \link{plotPartialDependence}

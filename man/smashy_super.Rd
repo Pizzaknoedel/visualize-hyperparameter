@@ -3,7 +3,7 @@
 \docType{data}
 \name{smashy_super}
 \alias{smashy_super}
-\title{logloss Performance for two hyperparameter.}
+\title{logloss Performance for two hyperparameters.}
 \format{
 \code{smashy_super} is a data frame with 200 rows and 12 variables:
 \describe{
@@ -13,7 +13,7 @@
 smashy_super
 }
 \description{
-A dataset containing the \code{yval} performance meassure and 11 hyperparameter.
+A dataset containing the \code{yval} performance measure and 11 hyperparameters.
 The dataset is from Moosbauer, Julia, et al. "Automated Benchmark-Driven Design and Explanation of Hyperparameter Optimizers."
 arXiv preprint arXiv:2111.14756 (2021).
 }

@@ -5,8 +5,9 @@
 #' @import mlr3learners
 #' @import plotly
 #'
-#' @title VisHyp: Visualize Hyperparameter Performance Dependencies
-#' @description The following four different visualization options are provided in this package, which are used to visualize hyperparameter performance dependencies.
+#' @title VisHyp: Visualization of Hyperparameter Performance Dependencies
+#' @description The following four visualization methods are provided with this package to visualize hyperparameter performance dependencies.
+#'
 #' * Heatmap: [plotHeatmap]
 #' * Partial Dependence Plot: [plotPartialDependence]
 #' * Importance Plot: [plotImportance]

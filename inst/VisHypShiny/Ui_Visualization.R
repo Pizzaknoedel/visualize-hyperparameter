@@ -1,4 +1,4 @@
-#UI Data
+# UI visualization
 VisualizationUI <- function(id, label = "Visualizaion") {
   ns <- NS(id)
   tagList(

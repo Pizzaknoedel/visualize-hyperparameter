@@ -20,30 +20,30 @@ A task for which the plot should be generated.}
 
 \item{features}{(\code{character(1)} | \code{character(2)}) \cr
 The name of the features for which the partial dependence should be calculated.
-If no features are specified, the first 2 features of the Task object will be plotted. Default is NULL.}
+If no features are specified, the first two features of the task object will be plotted. The default is NULL.}
 
 \item{learner}{\link[mlr3:Learner]{mlr3::Learner} object \cr
-A Learner for which the plot should be generated.
-If NUll, then a Random Forest for regression or classification will be used. Default is NULL.}
+A learner for which the plot should be generated.
+If NULL, a random forest for regression or classification will be used. The default is NULL.}
 
 \item{gridsize}{(\code{numeric(1)}) \cr
-The number of rectangles/ sections per axis. Default is 20.}
+The number of rectangles/sections per axis. The default is 20.}
 
 \item{rug}{(\code{logical}) \cr
-If TRUE, then a rug will be plotted. Default is TRUE.}
+If TRUE, a rug will be plotted. The default is TRUE.}
 
 \item{plotICE}{(\code{logical}) \cr
-If TRUE, then the individual conditional expectations (ICE) will be also plotted. Only available for one feature.
-Default is TRUE.}
+If TRUE, the individual conditional expectations (ICE) will be also plotted. It is only available if only one
+feature is chosen. The default is TRUE.}
 
 \item{title}{(\code{logical}) \cr
-If TRUE, then a title will be plotted. Default is TRUE.}
+If TRUE, the title will be plotted. The default is TRUE.}
 }
 \value{
 A \link{plotly} object.
 }
 \description{
-Visualize a Partial Dependence Plot from a \link[mlr3:Task]{mlr3::Task} object and a \link[mlr3:Learner]{mlr3::Learner}
+Visualization of a partial dependence plot from a \link[mlr3:Task]{mlr3::Task} object and a \link[mlr3:Learner]{mlr3::Learner}.
 }
 \examples{
 library(mlr3)
